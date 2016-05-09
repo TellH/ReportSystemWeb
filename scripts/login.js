@@ -6,6 +6,7 @@ $(document).ready(function () {
         if (!validateForm($("#form_login")[0])) {
             return;
         }
+        NProgress.start();
         $.ajax({
             type: "POST",
             url: "http://tanlehua.top/ReportSystem/account/login.do",
@@ -16,6 +17,7 @@ $(document).ready(function () {
                 identity: $("#select_identity").val()
             },
             success: function (data) {
+                NProgress.done();
                 if (data.result == "failed") {
                     alert(data.msg);
                 } else if (data.result == "success") {
@@ -29,6 +31,7 @@ $(document).ready(function () {
                 }
             },
             error: function (jqXHR) {
+                NProgress.done();
                 alert("似乎出现了些小问题,错误码：" + jqXHR.status);
             }
         })
@@ -59,3 +62,8 @@ function validateForm(whichFrom) {
 $(function () {
     $('[data-toggle=tooltip]').tooltip();
 });
+
+$(document).on('page:fetch',   function() { NProgress.start(); });
+$(document).on('page:change',  function() { NProgress.done(); });
+$(document).on('page:restore', function() { NProgress.remove(); });
+NProgress.inc();
