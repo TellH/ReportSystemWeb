@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>武汉理工大学实验报告管理系统</title>
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <script src="styles/dist/js/flat-ui.min.js"></script>
+    <script src="scripts/login.js"></script>
+    <!-- Loading Bootstrap -->
+    <link href="styles/dist/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles/dist/css/flat-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/login.css"/>
+    <!--在线字体-->
+    <link href='http://api.youziku.com/webfont/CSS/572ff40df629d806240718f4' rel='stylesheet' type='text/css'/>
+
+    <link rel="shortcut icon" href="images/login/icon.png" type="image/x-icon" />
+
+</head>
+<body class="container" id="container">
+<div class="login">
+    <div class="login-screen">
+        <div class="login-icon">
+            <img src="images/login/icon.png" alt="Welcome to Mail App">
+            <h4 id="title">武汉理工大学
+                <small id="subtitle">实验报告管理系统</small>
+            </h4>
+        </div>
+        <form method="post" action="" id="form_login">
+            <div class="login-form">
+                <div class="form-group">
+                    <input type="text" class="form-control login-field required" value="" placeholder="Enter your id" data-toggle="tooltip"
+                           data-original-title="用户ID号" data-placement="left"
+                           id="login-id" name="用户ID号" required>
+                    <label class="login-field-icon fui-user" for="login-id"></label>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" class="form-control login-field required" value="" placeholder="Password" data-toggle="tooltip"
+                           data-original-title="密码" data-placement="left"
+                           id="login-pass" name="密码" required >
+                    <label class="login-field-icon fui-lock" for="login-pass"></label>
+                </div>
+                <select class="form-control select select-default select-primary select-block mbl" id="select_identity"
+                        data-toggle="tooltip" data-original-title="登录身份" data-placement="left">
+                    <optgroup label="Identity">
+                        <option value="0">学生</option>
+                        <option value="1">教师</option>
+                    </optgroup>
+                </select>
+
+                <a class="btn btn-primary btn-lg btn-block" id="btn_login">登录</a>
+                <a class="login-link" href="#" id="btn_forget_password">忘记密码</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

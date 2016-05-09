@@ -1,0 +1,58 @@
+.container {
+    width: 970px;
+}
+
+#title {
+    font-size: 16px;
+    font-family: 'lixukexingshu3387a9c085aeb', 华文楷体, sans-serif;
+}
+
+#subtitle {
+    font-size: 23px;
+    font-family: 华文行楷, serif;
+}
+
+.select-primary .select2-choice {
+    color: #fff;
+    background-color: #1abc9c;
+}
+
+.select2-choice {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    padding: 10px 39px 10px 15px;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.4;
+    border: none;
+    border-radius: 4px;
+    -webkit-transition: border .25s linear, color .25s linear, background-color .25s linear;
+    transition: border .25s linear, color .25s linear, background-color .25s linear;
+}
+
+#container {
+    margin-top: 100px;
+}
+
+a {
+    font-family: 华文行楷, serif;
+}
+
+.my_tooltip {
+    position: relative
+}
+
+.my_tooltip span {
+    display: none;
+    padding: 5px;
+    width: 200px;
+}
+
+/*background-color is a must for IE6*/
+.my_tooltip:hover span {
+    display: inline;
+    position: absolute;
+}
+.tooltip:hover span{display:inline; position:absolute;}
+a:hover {background:#fff;}
