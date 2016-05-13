@@ -6,5 +6,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="metro" level="application" />
+    <orderEntry type="library" name="bootstrap-table-locale-all" level="application" />
+    <orderEntry type="library" name="bootstrap-table" level="application" />
+    <orderEntry type="library" name="bootstrap-table-zh-CN" level="application" />
   </component>
 </module>

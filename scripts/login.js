@@ -9,7 +9,7 @@ $(document).ready(function () {
         NProgress.start();
         $.ajax({
             type: "POST",
-            url: "http://tanlehua.top/ReportSystem/account/login.do",
+            url: "http://localhost:8080/ReportSystem/account/login.do",
             dataType: 'json',
             data: {
                 userId: $("#login-id").val(),
@@ -22,12 +22,7 @@ $(document).ready(function () {
                     alert(data.msg);
                 } else if (data.result == "success") {
                     alert(data.msg);
-                    if (data.identity == 0) {
-                        window.location.href = "student_home.html?userId=" + $("#login-id").val() + "identity=" + data.identity;
-                    }
-                    else if (data.identity == 1){
-                        window.location.href = "teacher_home.html?userId=" + $("#login-id").val() + "identity=" + data.identity;
-                    }
+                    window.location.href = "student_home.html?userId=" + $("#login-id").val() + "&identity=" + data.identity;
                 }
             },
             error: function (jqXHR) {
@@ -58,12 +53,39 @@ function validateForm(whichFrom) {
     }
     return true;
 }
-
+function resetFields(whichForm) {
+    //遍历表单的所有元素
+    for (var i = 0; i < whichForm.elements.length; i++) {
+        var element = whichForm.elements[i];
+        //如果该元素是一个提交按钮，跳转到下一次循环开始
+        if (element.type == "submit") continue;
+        //如果该元素没有默认值，跳转到下一次循环开始
+        if (!element.defaultValue) continue;
+        //为该元素获得输入焦点时增加一个响应处理函数，如果是默认值则把值置为空
+        element.onfocus = function () {
+            if (this.value == this.defaultValue) {
+                this.value = "";
+            }
+        }
+        //为该元素失去输入焦点时增加一个事件处理函数，如果值如果为空，把值置为默认值。
+        element.onblur = function () {
+            if (this.value == "") {
+                this.value = this.defaultValue;
+            }
+        }
+    }
+}
 $(function () {
     $('[data-toggle=tooltip]').tooltip();
 });
 
-$(document).on('page:fetch',   function() { NProgress.start(); });
-$(document).on('page:change',  function() { NProgress.done(); });
-$(document).on('page:restore', function() { NProgress.remove(); });
+$(document).on('page:fetch', function () {
+    NProgress.start();
+});
+$(document).on('page:change', function () {
+    NProgress.done();
+});
+$(document).on('page:restore', function () {
+    NProgress.remove();
+});
 NProgress.inc();

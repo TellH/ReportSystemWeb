@@ -3,9 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>学生实验报告管理主页</title>
-    <link rel="shortcut icon" href="images/login/icon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/login/icon.png" type="image/x-icon"/>
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <!-- Loading Bootstrap -->
+    <link href="styles/dist/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles/dist/css/flat-ui.min.css"/>
+    <script src="styles/dist/js/flat-ui.min.js"></script>
+    <link href="http://cdn.bootcss.com/bootstrap-table/1.10.1/bootstrap-table.min.css" rel="stylesheet"/>
+    <script src="http://cdn.bootcss.com/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap-table/1.10.1/bootstrap-table-locale-all.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap-table/1.10.1/locale/bootstrap-table-zh-CN.min.js"></script>
+
+    <!--loading nprogress-->
+    <link rel="stylesheet" type="text/css" href="styles/nprogress.css"/>
+    <script src="scripts/nprogress.js"></script>
+
+    <script src="scripts/student_home.js"></script>
 </head>
-<body>
-<p>裤子都脱了，你就给我看这个？</p>
+<body class="container">
+<table id="table"
+       data-row-style="cardview"
+       data-striped="true">
+</table>
 </body>
 </html>
