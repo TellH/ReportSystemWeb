@@ -9,5 +9,6 @@
     <orderEntry type="library" name="bootstrap-table-locale-all" level="application" />
     <orderEntry type="library" name="bootstrap-table" level="application" />
     <orderEntry type="library" name="bootstrap-table-zh-CN" level="application" />
+    <orderEntry type="library" name="bootstrap-material-design.iife" level="application" />
   </component>
 </module>

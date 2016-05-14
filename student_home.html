@@ -13,17 +13,88 @@
     <script src="http://cdn.bootcss.com/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap-table/1.10.1/bootstrap-table-locale-all.js"></script>
     <script src="http://cdn.bootcss.com/bootstrap-table/1.10.1/locale/bootstrap-table-zh-CN.min.js"></script>
-
     <!--loading nprogress-->
     <link rel="stylesheet" type="text/css" href="styles/nprogress.css"/>
     <script src="scripts/nprogress.js"></script>
 
     <script src="scripts/student_home.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/student_home.css">
 </head>
 <body class="container">
 <table id="table"
        data-row-style="cardview"
        data-striped="true">
 </table>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="updateAdviceModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="" id="form_send_advice">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <p class="modal-title" id="myModalLabel">留言给老师</p>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control required material-input" value=""
+                           placeholder="Enter your advice" data-toggle="tooltip"
+                           data-original-title="留言" data-placement="left"
+                           id="advice" name="留言" required></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control required" value="" placeholder="Password"
+                           data-toggle="tooltip"
+                           data-original-title="密码" data-placement="left"
+                           id="password" name="密码" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" id="summit_advice">提交</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="uploadReportModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="" id="form_upload_report">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <p class="modal-title">上传实验报告</p>
+                </div>
+                <fieldset>
+                    <div class="form-group">
+                        <input type="file" id="InputFile">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control required" value="" placeholder="Password"
+                               data-toggle="tooltip"
+                               data-original-title="密码" data-placement="left"
+                               id="password_for_updateReport" name="密码" required>
+                    </div>
+                </fieldset>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" id="summit_report">提交</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
 </body>
 </html>

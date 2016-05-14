@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{bootstrap-table, bootstrap-table-locale-all, bootstrap-table-zh-CN, jquery, metro}" />
+    <file url="PROJECT" libraries="{bootstrap-material-design.iife, bootstrap-table, bootstrap-table-locale-all, bootstrap-table-zh-CN, jquery, metro}" />
   </component>
 </project>
