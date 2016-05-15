@@ -10,5 +10,9 @@
     <orderEntry type="library" name="bootstrap-table" level="application" />
     <orderEntry type="library" name="bootstrap-table-zh-CN" level="application" />
     <orderEntry type="library" name="bootstrap-material-design.iife" level="application" />
+    <orderEntry type="library" name="md5" level="application" />
+    <orderEntry type="library" name="ar" level="application" />
+    <orderEntry type="library" name="qiniu" level="application" />
+    <orderEntry type="library" name="aliyun-oss-sdk-4.3.0" level="application" />
   </component>
 </module>

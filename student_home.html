@@ -16,15 +16,47 @@
     <!--loading nprogress-->
     <link rel="stylesheet" type="text/css" href="styles/nprogress.css"/>
     <script src="scripts/nprogress.js"></script>
+    <!--qiniu-->
+    <script src="scripts/moxie.min.js"></script>
+    <script src="scripts/plupload.full.min.js"></script>
+    <script src="scripts/qiniu.min.js"></script>
 
     <script src="scripts/student_home.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/student_home.css">
 </head>
-<body class="container">
-<table id="table"
-       data-row-style="cardview"
-       data-striped="true">
-</table>
+<body class="container-fluid">
+<ul class="nav nav-tabs container-fluid .navbar-fixed-top" id="navigation">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="http://tanlehua.top/ReportSystem">实验报告管理系统</a>
+    </div>
+
+    <li role="presentation" class="active"><a href="#">展示所有</a></li>
+    <li role="presentation" class="dropdown">
+        <a href="#" class="dropdown-toggle"
+           data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">按学期展示<span class="caret"></span></a>
+        <ul class="dropdown-menu" id="term_selector">
+            <li value="2015-1"><a href="#">2015年第一学期</a></li>
+            <li value="2015-2"><a href="#">2015年第二学期</a></li>
+        </ul>
+    </li>
+    <li role="presentation" class="dropdown">
+        <a href="#" class="dropdown-toggle"
+           data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">按实验报告状态展示<span class="caret"></span></a>
+        <ul class="dropdown-menu" id="status_selector">
+            <li value="0"><a href="#">未提交</a></li>
+            <li value="1"><a href="#">已提交</a></li>
+            <li value="2"><a href="#">已批改</a></li>
+        </ul>
+    </li>
+    <button id="btn_logout" type="button" class="btn btn-tip navbar-right navbar-btn"><span class="glyphicon glyphicon-off"></span>注销</button>
+    <p class="navbar-text navbar-right" id="welcome">欢迎回来</p>
+</ul>
+<div id="table_container">
+    <table id="table" data-row-style="cardview" data-striped="true"></table>
+</div>
+
 
 <!-- 模态框（Modal） -->
 <div class="modal fade" id="updateAdviceModal" tabindex="-1" role="dialog"
@@ -41,15 +73,18 @@
                 </div>
                 <div class="form-group">
                     <textarea class="form-control required material-input" value=""
-                           placeholder="Enter your advice" data-toggle="tooltip"
-                           data-original-title="留言" data-placement="left"
-                           id="advice" name="留言" required></textarea>
+                              placeholder="Enter your advice" data-toggle="tooltip"
+                              data-original-title="留言" data-placement="left"
+                              id="advice" name="留言" required></textarea>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control required" value="" placeholder="Password"
-                           data-toggle="tooltip"
-                           data-original-title="密码" data-placement="left"
-                           id="password" name="密码" required>
+                    <div class="input-group">
+                        <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                        <input type="password" class="form-control required" value="" placeholder="Password"
+                               data-toggle="tooltip"
+                               data-original-title="密码" data-placement="left"
+                               id="password" name="密码" required>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default"
@@ -61,7 +96,6 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
-
 <div class="modal fade" id="uploadReportModal" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -74,17 +108,19 @@
                     </button>
                     <p class="modal-title">上传实验报告</p>
                 </div>
-                <fieldset>
-                    <div class="form-group">
-                        <input type="file" id="InputFile">
-                    </div>
-                    <div class="form-group">
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon glyphicon glyphicon-lock"></span>
                         <input type="password" class="form-control required" value="" placeholder="Password"
                                data-toggle="tooltip"
                                data-original-title="密码" data-placement="left"
                                id="password_for_updateReport" name="密码" required>
                     </div>
-                </fieldset>
+                </div>
+                <div class="form-group">
+                    <a id="pickfiles" class="btn btn-info"><span class="glyphicon glyphicon-plus">选择文件</span></a>
+                    <div><span class="glyphicon glyphicon-saved" id="selected_file_name"></span></div>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default"
                             data-dismiss="modal">关闭
@@ -95,6 +131,5 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
-
 </body>
 </html>

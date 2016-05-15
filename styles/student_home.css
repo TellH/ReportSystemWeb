@@ -3,6 +3,18 @@
     /*margin-right: 10px;*/
 /*}*/
 .form-group{
-    margin-left: 30px;
-    margin-right: 30px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 10px;
+}
+#table_container{
+    margin-top: 70px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+#welcome{
+    padding-right: 10px;
+}
+#btn_logout{
+    margin-right: 6px;
 }

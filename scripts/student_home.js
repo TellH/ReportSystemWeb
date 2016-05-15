@@ -3,6 +3,81 @@
  */
 var selectedReportId;
 $(document).ready(function () {
+    $("#selected_file_name")[0].style.display = "none";
+    var uploader = Qiniu.uploader({
+        runtimes: 'html5,flash,html4',      // 上传模式,依次退化
+        browse_button: 'pickfiles',         // 上传选择的点选按钮，**必需**
+        // 在初始化时，uptoken, uptoken_url, uptoken_func 三个参数中必须有一个被设置
+        uptoken_url: 'http://localhost:8080/ReportSystem/upload/getUpToken.do',         // Ajax 请求 uptoken 的 Url，**强烈建议设置**（服务端提供）
+        get_new_uptoken: false,             // 设置上传文件的时候是否每次都重新获取新的 uptoken
+        max_file_size: '100mb',
+        domain: 'o762c73os.bkt.clouddn.com',     // bucket 域名，下载资源时用到，**必需**
+        chunk_size: '4mb',                  // 分块上传时，每块的体积
+        auto_start: false,                   // 选择文件后自动上传，若关闭需要自己绑定事件触发上传,
+        init: {
+            'FilesAdded': function (up, files) {
+                var file = up.files[up.files.length - 1];
+                var selectedFile = $("#selected_file_name")[0];
+                selectedFile.style.display = "inline";
+                selectedFile.innerText = file.name;
+            },
+            'UploadProgress': function (up, file) {
+                // 每个文件上传时,处理相关的事情
+                if (file.percent != 100)
+                    NProgress.set(file.percent * 0.01);
+            },
+            'FileUploaded': function (up, file, info) {
+                var domain = up.getOption('domain');
+                var res = eval('(' + info + ')');
+                var reportUrl = 'http://' + domain + '/' + res.key; //获取上传成功后的文件的Url
+                console.log(reportUrl);
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8080/ReportSystem/report/student/update.do",
+                    dataType: 'json',
+                    data: {
+                        userId: $.getUrlParam('userId'),
+                        password: $("#password_for_updateReport").val(),
+                        reportId: selectedReportId,
+                        docUrl: reportUrl
+                    },
+                    success: function (data) {
+                        NProgress.done();
+                        if (data.result == "failed") {
+                            alert(data.msg);
+                        } else if (data.result == "success") {
+                            $('#uploadReportModal').modal('toggle');
+                            alert(data.msg);
+                        }
+                    },
+                    error: function (jqXHR) {
+                        alert("似乎出现了些小问题,错误码：" + jqXHR.status);
+                        NProgress.done();
+                    }
+                });
+            },
+            'Error': function (up, err, errTip) {
+                //上传出错时,处理相关的事情
+                alert(errTip);
+            }
+        }
+    });
+    uploader.bind('FilesAdded', function (uploader, file) {
+        //确保每次选择文件只能添加一个文件，删掉前面添加的文件
+        if (uploader.files.length > 1) {
+            uploader.splice(0, uploader.files.length - 2);
+        }
+        var file = uploader.files[0];
+        file.name = $.getUrlParam('userId') + selectedReportId + file.name;
+    });
+
+    $("#summit_report").click(function () {
+        if (!validateForm($("#form_upload_report")[0])) {
+            return;
+        }
+        uploader.start();
+    });
+
     $("#summit_advice").click(function () {
         if (!validateForm($("#form_send_advice")[0])) {
             return;
@@ -14,7 +89,7 @@ $(document).ready(function () {
             data: {
                 userId: $.getUrlParam('userId'),
                 password: $("#password").val(),
-                reportId:selectedReportId,
+                reportId: selectedReportId,
                 advice: $("#advice").val()
             },
             success: function (data) {
@@ -37,13 +112,13 @@ $(document).ready(function () {
             title: '实验报告题目',
             field: 'name',
             align: 'center',
-            width:  "10%" ,
+            width: "20%",
             valign: 'middle'
         }, {
             title: '实验报告内容',
             field: 'content',
             align: 'center',
-            width:  "20%" ,
+            width: "30%",
             valign: 'middle'
         }, {
             title: '指导老师',
@@ -60,25 +135,25 @@ $(document).ready(function () {
             field: 'date_from',
             align: 'center',
             valign: 'middle',
-            sortable:true
+            sortable: true
         }, {
             title: '截止时间',
             field: 'date_to',
             align: 'center',
             valign: 'middle',
-            sortable:true
+            sortable: true
         }, {
             title: '注意事项',
             field: 'note',
             align: 'center',
-            width:  "10px" ,
+            width: "20px",
             valign: 'middle'
         }, {
             title: '模板',
             field: 'templateUrl',
             align: 'center',
             valign: 'middle',
-            width:  "1%" ,
+            width: "1%",
             formatter: templateUrlFormatter
         }, {
             title: '操作',
@@ -183,7 +258,7 @@ function detailFormatter(index, row) {
         success: function (data) {
             NProgress.done();
             if (data.result == "success") {
-                var row=data.data[0];
+                var row = data.data[0];
                 $.each(row, function (key, value) {
                     switch (key) {
                         case 'score':
@@ -204,8 +279,9 @@ function detailFormatter(index, row) {
                         case 'note':
                             html.push('<li><b>' + '注意事项' + ':</b> ' + value + '</li>');
                             break;
-                        case 'status':{
-                            switch (value){
+                        case 'status':
+                        {
+                            switch (value) {
                                 case 0:
                                     value = "未提交";
                                     break;
@@ -288,14 +364,37 @@ function operateFormatter(value, row, index) {
 }
 window.operateEvents = {
     'click .download': function (e, value, row, index) {
-        if (row.url)
-            window.open(row.url,"_blank");
+        NProgress.start();
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/ReportSystem/report/student/detail.do",
+            dataType: 'json',
+            async: false,
+            data: {
+                userId: $.getUrlParam('userId'),
+                reportId: row.reportId
+            },
+            success: function (data) {
+                NProgress.done();
+                if (data.result == "success") {
+                    if (data.data[0].docUrl){
+                        window.open(data.data[0].docUrl, "_blank");
+                    }else {
+                        alert("你的实验报告还没提交呢！");
+                    }
+                }
+            },
+            error: function (jqXHR) {
+                NProgress.done();
+                alert("似乎出现了些小问题,错误码：" + jqXHR.status);
+            }
+        });
     },
     'click .upload': function (e, value, row, index) {
-        var a = row;
+        selectedReportId = row.reportId;
     },
     'click .sendAdvice': function (e, value, row, index) {
-        selectedReportId=row.reportId;
+        selectedReportId = row.reportId;
     }
 };
 function isFilled(field) {
@@ -323,3 +422,13 @@ function validateForm(whichFrom) {
 $(function () {
     $('[data-toggle=tooltip]').tooltip();
 });
+$(document).on('page:fetch', function () {
+    NProgress.start();
+});
+$(document).on('page:change', function () {
+    NProgress.done();
+});
+$(document).on('page:restore', function () {
+    NProgress.remove();
+});
+NProgress.inc();
