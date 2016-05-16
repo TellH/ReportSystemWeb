@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>布置实验报告</title>
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <link href="styles/dist/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles/bootstrap-material-design.min.css" rel="stylesheet">
+    <link href="styles/ripples.min.css" rel="stylesheet">
+    <link href="styles/add_report.css" rel="stylesheet">
+    <script src="scripts/material.min.js"></script>
+    <script src="scripts/ripples.min.js"></script>
+    <script src="scripts/ripples.min.js"></script>
+
+    <script src="scripts/bootstrap-datepicker.min.js"></script>
+    <link href="styles/bootstrap-datepicker.min.css" rel="stylesheet">
+    <script src="scripts/addReport.js"></script>
+</head>
+<body class="container">
+<script>
+    $(function () {
+        $.material.init();
+    });
+</script>
+<div class="well bs-component card">
+    <form class="form-horizontal">
+        <fieldset>
+            <legend>实验报告</legend>
+            <div class="form-group">
+                <label for="inputPassword" class="col-md-2 control-label">你的密码</label>
+                <div class="col-md-10">
+                    <input type="password" class="form-control" id="inputPassword" placeholder="Password" required>
+                    <span class="help-block">我们需要验证您的身份，谢谢配合</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputReportTitle" class="col-md-2 control-label">实验报告题目</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="inputReportTitle" placeholder="ReportTitle" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputFile" class="col-md-2 control-label">实验报告模板</label>
+                <div class="col-md-10 input-group">
+                    <input type="text" readonly="" class="form-control" placeholder="Browse...">
+                    <input type="file" id="inputFile" multiple="">
+                    <span class="input-group-btn input-group-sm">
+                        <button type="button" class="btn btn-fab btn-fab-mini">
+                            <i class="glyphicon glyphicon-open"></i></button>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="content" class="col-md-2 control-label">实验报告内容</label>
+                <div class="col-md-10">
+                    <textarea class="form-control" rows="3" id="content" required></textarea>
+                    <span class="help-block">亲爱的老师，请您言简意赅哦！</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="note" class="col-md-2 control-label">注意事项</label>
+                <div class="col-md-10">
+                    <textarea class="form-control" rows="3" id="note"></textarea>
+                    <span class="help-block">告诉学生完成报告要注意哪些地方吧~</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">校区</label>
+                <div class="col-md-10">
+                    <div class="radio radio-primary">
+                        <label><input type="radio" name="location" id="optionsRadios1" value="0" checked="">余区</label>
+                    </div>
+                    <div class="radio radio-primary">
+                        <label><input type="radio" name="location" id="optionsRadios2" value="1">马区</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="selectLesson" class="col-md-2 control-label">实验课程</label>
+                <div class="col-md-10">
+                    <select id="selectLesson" class="form-control" required>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                    <span class="help-block">您要把实验安排到哪个实验课呢~</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="deadline" class="col-md-2 control-label">截止提交日期</label>
+                <div class="col-md-10">
+                    <input data-format="yyyy-MM-dd" type="text" class="form-control" id="deadline" placeholder="deadline" data-date-format="yyyy-mm-dd">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="college" class="col-md-2 control-label">学院</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="college" placeholder="college">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="college" class="col-md-2 control-label">专业</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="major" placeholder="major">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10 col-md-offset-2">
+                    <button type="button" class="btn btn-default">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

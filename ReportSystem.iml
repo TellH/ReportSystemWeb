@@ -14,5 +14,8 @@
     <orderEntry type="library" name="ar" level="application" />
     <orderEntry type="library" name="qiniu" level="application" />
     <orderEntry type="library" name="aliyun-oss-sdk-4.3.0" level="application" />
+    <orderEntry type="library" name="bootstrap-material-datetimepicker" level="application" />
+    <orderEntry type="library" name="af" level="application" />
+    <orderEntry type="library" name="bootstrap-datepicker" level="application" />
   </component>
 </module>
