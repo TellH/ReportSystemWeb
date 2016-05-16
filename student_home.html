@@ -27,36 +27,37 @@
 <body class="container-fluid">
 <ul class="nav nav-tabs container-fluid .navbar-fixed-top" id="navigation">
     <div class="navbar-header">
-        <a class="navbar-brand" href="http://tanlehua.top/ReportSystem">实验报告管理系统</a>
+        <a class="navbar-brand">实验报告管理系统</a>
     </div>
-
-    <li role="presentation" class="active"><a href="#">展示所有</a></li>
-    <li role="presentation" class="dropdown">
-        <a href="#" class="dropdown-toggle"
-           data-toggle="dropdown"
+    <li role="presentation" class="active" id="listAll"><a href="#">展示所有</a></li>
+    <li role="presentation" class="dropdown" id="listByTerm">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">按学期展示<span class="caret"></span></a>
         <ul class="dropdown-menu" id="term_selector">
-            <li value="2015-1"><a href="#">2015年第一学期</a></li>
-            <li value="2015-2"><a href="#">2015年第二学期</a></li>
+            <!--<li value="2015-1"><a href="#">2015年第一学期</a></li>-->
+            <!--<li value="2015-2"><a href="#">2015年第二学期</a></li>-->
         </ul>
     </li>
-    <li role="presentation" class="dropdown">
+    <li role="presentation" class="dropdown" id="listByStatus">
         <a href="#" class="dropdown-toggle"
            data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">按实验报告状态展示<span class="caret"></span></a>
         <ul class="dropdown-menu" id="status_selector">
-            <li value="0"><a href="#">未提交</a></li>
-            <li value="1"><a href="#">已提交</a></li>
-            <li value="2"><a href="#">已批改</a></li>
+            <li value="0" onclick="onclickStatusListItem(this)"><a href="#">未提交</a></li>
+            <li value="1" onclick="onclickStatusListItem(this)"><a href="#">已提交</a></li>
+            <li value="2" onclick="onclickStatusListItem(this)"><a href="#">已批改</a></li>
         </ul>
     </li>
-    <button id="btn_logout" type="button" class="btn btn-tip navbar-right navbar-btn"><span class="glyphicon glyphicon-off"></span>注销</button>
+    <button id="btn_logout" type="button" class="btn btn-tip navbar-right navbar-btn"><span
+            class="glyphicon glyphicon-off"></span>&nbsp;注销
+    </button>
     <p class="navbar-text navbar-right" id="welcome">欢迎回来</p>
 </ul>
 <div id="table_container">
     <table id="table" data-row-style="cardview" data-striped="true"></table>
 </div>
-
+<div class="navbar-fixed-bottom container-fluid"><p class="center">版权所有@武汉理工大学计算机科学与技术学院Web3Team&nbsp;&nbsp;&nbsp;<a
+        data-toggle="modal" data-target="#contactModal" href="#">联系我</a></p></div>
 
 <!-- 模态框（Modal） -->
 <div class="modal fade" id="updateAdviceModal" tabindex="-1" role="dialog"
@@ -126,6 +127,29 @@
                             data-dismiss="modal">关闭
                     </button>
                     <button type="button" class="btn btn-primary" id="summit_report">提交</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <p class="modal-title">关于我</p>
+                </div>
+                <div class="center">
+                    <p class="center">QQ：&nbsp;&nbsp;&nbsp;570495627</p>
+                    <p class="center">邮箱：570495627@qq.com</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
             </form>
         </div><!-- /.modal-content -->

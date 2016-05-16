@@ -1,14 +1,20 @@
 /**
  * Created by tlh on 2016/5/13.
  */
+var preUrl = 'http://localhost:8080/ReportSystem/';
 var selectedReportId;
+var selectedTerm;
+var selectedStatus;
+var pageData;
 $(document).ready(function () {
+    initNavigationBar();
+    list(preUrl + 'report/student/listAll.do', getListAllParam);
     $("#selected_file_name")[0].style.display = "none";
     var uploader = Qiniu.uploader({
         runtimes: 'html5,flash,html4',      // 上传模式,依次退化
         browse_button: 'pickfiles',         // 上传选择的点选按钮，**必需**
         // 在初始化时，uptoken, uptoken_url, uptoken_func 三个参数中必须有一个被设置
-        uptoken_url: 'http://localhost:8080/ReportSystem/upload/getUpToken.do',         // Ajax 请求 uptoken 的 Url，**强烈建议设置**（服务端提供）
+        uptoken_url: preUrl + 'upload/getUpToken.do',         // Ajax 请求 uptoken 的 Url，**强烈建议设置**（服务端提供）
         get_new_uptoken: false,             // 设置上传文件的时候是否每次都重新获取新的 uptoken
         max_file_size: '100mb',
         domain: 'o762c73os.bkt.clouddn.com',     // bucket 域名，下载资源时用到，**必需**
@@ -33,7 +39,7 @@ $(document).ready(function () {
                 console.log(reportUrl);
                 $.ajax({
                     type: "POST",
-                    url: "http://localhost:8080/ReportSystem/report/student/update.do",
+                    url: preUrl + "report/student/update.do",
                     dataType: 'json',
                     data: {
                         userId: $.getUrlParam('userId'),
@@ -70,21 +76,19 @@ $(document).ready(function () {
         var file = uploader.files[0];
         file.name = $.getUrlParam('userId') + selectedReportId + file.name;
     });
-
     $("#summit_report").click(function () {
         if (!validateForm($("#form_upload_report")[0])) {
             return;
         }
         uploader.start();
     });
-
     $("#summit_advice").click(function () {
         if (!validateForm($("#form_send_advice")[0])) {
             return;
         }
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/ReportSystem/report/student/update.do",
+            url: preUrl + "report/student/update.do",
             dataType: 'json',
             data: {
                 userId: $.getUrlParam('userId'),
@@ -107,6 +111,9 @@ $(document).ready(function () {
             }
         });
     });
+    $(".navbar-brand").attr("href",preUrl);
+});
+function list(url, getParams) {
     $("#table").bootstrapTable({
         columns: [{
             title: '实验报告题目',
@@ -177,23 +184,183 @@ $(document).ready(function () {
         detailFormatter: "detailFormatter",
 
         dataType: "json",
-        url: "http://localhost:8080/ReportSystem/report/student/listAll.do",
+        url: url,
         pagination: true,
         sidePagination: "server",
         pageSize: 10,
-        queryParams: paginationParam,
+        queryParams: getParams,
         responseHandler: responseHandler
     });
-});
+}
+function initNavigationBar() {
+    addTermListItem();
+    $("#btn_logout").click(function () {
+        NProgress.start();
+        $.ajax({
+            type: "POST",
+            url: preUrl + "account/logout.do",
+            dataType: 'json',
+            success: function (data) {
+                NProgress.done();
+                if (data.result == "failed") {
+                    alert(data.msg);
+                } else {
+                    window.open("login.html", "_self");
+                }
+            },
+            error: function (jqXHR) {
+                NProgress.done();
+                alert("似乎出现了些小问题,无法注销");
+            }
+        })
+    });
+    $("#listAll").click(function () {
+        switchTab($(this));
+        NProgress.start();
+        $('#table').bootstrapTable('refresh',getListAllParam());
+    });
+    $.ajax({
+        type: "POST",
+        url: preUrl + "account/getInfo.do",
+        dataType: 'json',
+        data: {
+            userId: $.getUrlParam('userId'),
+            identity: $.getUrlParam('identity')
+        },
+        success: function (data) {
+            if (data.result == "success") {
+                var userName = data.user.name;
+                $("#welcome")[0].innerText = '欢迎您，' + userName + '同学';
+            } else {
+                alert(data.msg);
+            }
+        }
+    });
 
-function paginationParam(params) {
+
+}
+function switchTab(tab) {
+    var navigation = $("#navigation")[0];
+    $("li").removeClass('active');
+    tab.addClass('active');
+}
+function addTermListItem() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var html = [];
+    var termSelector = $("#term_selector")[0];
+    var child1 = document.createElement("li");
+    if (month > 1 && month < 8) {
+        child1.setAttribute('value',year - 1 + '-2');
+        var a1 = document.createElement('a');
+        a1.appendChild(document.createTextNode((year - 1) + '年第二学期'));
+        a1.href = '#';
+        child1.appendChild(a1);
+        child1.onclick = onclickTermListItem;
+        termSelector.appendChild(child1);
+        var child2 = document.createElement("li");
+        child2.setAttribute('value',year - 1 + '-1');
+        var a2 = document.createElement('a');
+        a2.href = '#';
+        a2.appendChild(document.createTextNode((year - 1) + '年第一学期'));
+        child2.appendChild(a2);
+        termSelector.appendChild(child2);
+        child2.onclick = onclickTermListItem;
+        var child3 = document.createElement("li");
+        child3.setAttribute('value',year - 2 + '-2');
+        var a3 = document.createElement('a');
+        a3.href = '#';
+        a3.appendChild(document.createTextNode(year - 2 + '年第二学期'));
+        child3.appendChild(a3);
+        termSelector.appendChild(child3);
+        child3.onclick = onclickTermListItem;
+        var child4 = document.createElement("li");
+        child4.setAttribute('value',year - 2 + '-1');
+        var a4 = document.createElement('a');
+        a4.href = '#';
+        a4.appendChild(document.createTextNode(year - 2 + '年第一学期'));
+        child4.appendChild(a4);
+        child4.onclick = onclickTermListItem;
+        termSelector.appendChild(child4);
+    } else {
+        child1.setAttribute('value',year + '-1');
+        var a1 = document.createElement('a');
+        a1.href = '#';
+        a1.appendChild(document.createTextNode((year) + '年第一学期'));
+        child1.appendChild(a1);
+        termSelector.appendChild(child1);
+        child1.onclick = onclickTermListItem;
+        var child2 = document.createElement("li");
+        child2.setAttribute('value',year - 1 + '-2');
+        var a2 = document.createElement('a');
+        a2.href = '#';
+        a2.appendChild(document.createTextNode(year - 1 + '年第二学期'));
+        child2.appendChild(a2);
+        termSelector.appendChild(child2);
+        child2.onclick = onclickTermListItem;
+        var child3 = document.createElement("li");
+        child3.setAttribute('value',year - 1 + '-1');
+        var a3 = document.createElement('a');
+        a3.href = '#';
+        a3.appendChild(document.createTextNode(year - 1 + '年第一学期'));
+        child3.appendChild(a3);
+        child3.onclick = onclickTermListItem;
+        termSelector.appendChild(child3);
+    }
+}
+function onclickTermListItem() {
+    switchTab($("#listByTerm"));
+    selectedTerm = $(this).attr('value');
+    NProgress.start();
+    $('#table').bootstrapTable('refresh',getListByTermParam());
+}
+function onclickStatusListItem(li) {
+    switchTab($("#listByStatus"));
+    selectedStatus=$(li).attr('value');
+    NProgress.start();
+    $('#table').bootstrapTable('refresh',getListByStatusParam());
+}
+function getListAllParam(params) {
+    if (!params){
+        return{
+            url:preUrl + "report/student/listAll.do",
+            query:{
+                userId: $.getUrlParam('userId'),
+                itemNum: $('#table').bootstrapTable('getOptions').pageSize,
+                page: $('#table').bootstrapTable('getOptions').pageNumber
+            }
+        }
+    }
     return {
         userId: $.getUrlParam('userId'),
         itemNum: params.limit,
         page: $('#table').bootstrapTable('getOptions').pageNumber
     };
 }
-
+function getListByTermParam() {
+    return {
+        url:preUrl + "report/student/listByTerm.do",
+        query:{
+            userId: $.getUrlParam('userId'),
+            term: selectedTerm,
+            itemNum: $('#table').bootstrapTable('getOptions').pageSize,
+            page: $('#table').bootstrapTable('getOptions').pageNumber
+        }
+    };
+}
+function getListByStatusParam() {
+    return {
+        url:preUrl + "report/student/listByStatus.do",
+        query:{
+            userId: $.getUrlParam('userId'),
+            status: selectedStatus,
+            itemNum: $('#table').bootstrapTable('getOptions').pageSize,
+            page: $('#table').bootstrapTable('getOptions').pageNumber
+        }
+    };
+}
+//获得地址栏中的参数
 (function ($) {
     $.getUrlParam
         = function (name) {
@@ -206,8 +373,8 @@ function paginationParam(params) {
         return null;
     }
 })(jQuery);
-var pageData;
 function responseHandler(sourceData) {
+    NProgress.done();
     if (sourceData.result == "success") {
         pageData = sourceData.data;
         for (var i = 0; i < pageData.length; i++) {
@@ -248,7 +415,7 @@ function detailFormatter(index, row) {
     html.push('<ul>');
     $.ajax({
         type: "POST",
-        url: "http://localhost:8080/ReportSystem/report/student/detail.do",
+        url: preUrl + "report/student/detail.do",
         dataType: 'json',
         async: false,
         data: {
@@ -327,7 +494,6 @@ function detailFormatter(index, row) {
     return html.join('');
 }
 
-
 function templateUrlFormatter(value, row, index) {
     if (row.templateUrl) {
         return [
@@ -346,10 +512,6 @@ function templateUrlFormatter(value, row, index) {
 }
 
 function operateFormatter(value, row, index) {
-    // return [
-    //     '<span class="glyphicon glyphicon-download-alt"></span>',
-    //     '<span class="glyphicon glyphicon-open"></span>'
-    // ].join('');
     return [
         '<a class="download" href="javascript:void(0)" title="下载">',
         '<i class="glyphicon glyphicon-download-alt"></i>',
@@ -367,7 +529,7 @@ window.operateEvents = {
         NProgress.start();
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/ReportSystem/report/student/detail.do",
+            url: preUrl + "report/student/detail.do",
             dataType: 'json',
             async: false,
             data: {
@@ -377,9 +539,9 @@ window.operateEvents = {
             success: function (data) {
                 NProgress.done();
                 if (data.result == "success") {
-                    if (data.data[0].docUrl){
+                    if (data.data[0].docUrl) {
                         window.open(data.data[0].docUrl, "_blank");
-                    }else {
+                    } else {
                         alert("你的实验报告还没提交呢！");
                     }
                 }
