@@ -6,14 +6,23 @@
     <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
     <link href="styles/dist/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="styles/bootstrap-material-design.min.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link href="styles/ripples.min.css" rel="stylesheet">
     <link href="styles/add_report.css" rel="stylesheet">
     <script src="scripts/material.min.js"></script>
     <script src="scripts/ripples.min.js"></script>
-    <script src="scripts/ripples.min.js"></script>
 
     <script src="scripts/bootstrap-datepicker.min.js"></script>
     <link href="styles/bootstrap-datepicker.min.css" rel="stylesheet">
+    <!--qiniu-->
+    <script src="scripts/moxie.min.js"></script>
+    <script src="scripts/plupload.full.min.js"></script>
+    <script src="scripts/qiniu.min.js"></script>
+    <!--loading nprogress-->
+    <link rel="stylesheet" type="text/css" href="styles/nprogress.css"/>
+    <script src="scripts/nprogress.js"></script>
+
+    <script src="scripts/utils.js"></script>
     <script src="scripts/addReport.js"></script>
 </head>
 <body class="container">
@@ -23,28 +32,29 @@
     });
 </script>
 <div class="well bs-component card">
-    <form class="form-horizontal">
+    <form class="form-horizontal" id="form_add_report">
         <fieldset>
             <legend>实验报告</legend>
             <div class="form-group">
                 <label for="inputPassword" class="col-md-2 control-label">你的密码</label>
                 <div class="col-md-10">
-                    <input type="password" class="form-control" id="inputPassword" placeholder="Password" required>
+                    <input type="password" class="form-control required" id="inputPassword" placeholder="Password"
+                           data-toggle="tooltip" data-original-title="密码" data-placement="left" required>
                     <span class="help-block">我们需要验证您的身份，谢谢配合</span>
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputReportTitle" class="col-md-2 control-label">实验报告题目</label>
                 <div class="col-md-10">
-                    <input type="text" class="form-control" id="inputReportTitle" placeholder="ReportTitle" required>
+                    <input type="text" class="form-control required" id="inputReportTitle" placeholder="ReportTitle"
+                           data-toggle="tooltip" data-original-title="题目" data-placement="left" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="inputFile" class="col-md-2 control-label">实验报告模板</label>
+                <label for="pickfiles" class="col-md-2 control-label">实验报告模板</label>
                 <div class="col-md-10 input-group">
-                    <input type="text" readonly="" class="form-control" placeholder="Browse...">
-                    <input type="file" id="inputFile" multiple="">
+                    <input type="text" class="form-control" placeholder="Browse..." id="pickfiles">
                     <span class="input-group-btn input-group-sm">
                         <button type="button" class="btn btn-fab btn-fab-mini">
                             <i class="glyphicon glyphicon-open"></i></button>
@@ -54,7 +64,8 @@
             <div class="form-group">
                 <label for="content" class="col-md-2 control-label">实验报告内容</label>
                 <div class="col-md-10">
-                    <textarea class="form-control" rows="3" id="content" required></textarea>
+                    <textarea class="form-control required" rows="3" id="content"
+                              data-toggle="tooltip" data-original-title="内容" data-placement="left" required></textarea>
                     <span class="help-block">亲爱的老师，请您言简意赅哦！</span>
                 </div>
             </div>
@@ -79,12 +90,8 @@
             <div class="form-group">
                 <label for="selectLesson" class="col-md-2 control-label">实验课程</label>
                 <div class="col-md-10">
-                    <select id="selectLesson" class="form-control" required>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                    <select id="selectLesson" class="form-control required"
+                            data-toggle="tooltip" data-original-title="实验课程" data-placement="left" required>
                     </select>
                     <span class="help-block">您要把实验安排到哪个实验课呢~</span>
                 </div>
@@ -109,8 +116,8 @@
             </div>
             <div class="form-group">
                 <div class="col-md-10 col-md-offset-2">
-                    <button type="button" class="btn btn-default">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a class="btn btn-default" href="javascript:window.opener=null;window.open(' ','_self','');">取消</a>
+                    <a class="btn btn-primary" id="btn_add_report">提交</a>
                 </div>
             </div>
 

@@ -71,7 +71,7 @@ $(document).ready(function () {
     uploader.bind('FilesAdded', function (uploader, file) {
         //确保每次选择文件只能添加一个文件，删掉前面添加的文件
         if (uploader.files.length > 1) {
-            uploader.splice(0, uploader.files.length - 2);
+            uploader.splice(0, 1);
         }
         var file = uploader.files[0];
         file.name = $.getUrlParam('userId') + selectedReportId + file.name;
@@ -360,19 +360,7 @@ function getListByStatusParam() {
         }
     };
 }
-//获得地址栏中的参数
-(function ($) {
-    $.getUrlParam
-        = function (name) {
-        var reg
-            = new RegExp("(^|&)" +
-            name + "=([^&]*)(&|$)");
-        var r
-            = window.location.search.substr(1).match(reg);
-        if (r != null) return unescape(r[2]);
-        return null;
-    }
-})(jQuery);
+
 function responseHandler(sourceData) {
     NProgress.done();
     if (sourceData.result == "success") {
@@ -559,38 +547,3 @@ window.operateEvents = {
         selectedReportId = row.reportId;
     }
 };
-function isFilled(field) {
-    if (field.value.length < 1 || field.value == field.defaultValue) {
-        return false;
-    } else {
-        return true;
-    }
-}
-function validateForm(whichFrom) {
-    for (var i = 0; i < whichFrom.elements.length; i++) {
-        var element = whichFrom.elements[i];
-        if (element.className.indexOf("required") != -1) {
-            if (!isFilled(element)) {
-                var id = element.id;
-                if (element.name == "用户ID号") $('#login-id').tooltip('show');
-                else $('#login-pass').tooltip('show');
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-$(function () {
-    $('[data-toggle=tooltip]').tooltip();
-});
-$(document).on('page:fetch', function () {
-    NProgress.start();
-});
-$(document).on('page:change', function () {
-    NProgress.done();
-});
-$(document).on('page:restore', function () {
-    NProgress.remove();
-});
-NProgress.inc();
