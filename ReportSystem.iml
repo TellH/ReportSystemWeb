@@ -18,5 +18,6 @@
     <orderEntry type="library" name="af" level="application" />
     <orderEntry type="library" name="bootstrap-datepicker" level="application" />
     <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="pnotify" level="application" />
   </component>
 </module>

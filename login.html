@@ -5,18 +5,25 @@
     <title>武汉理工大学实验报告管理系统</title>
     <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
     <script src="styles/dist/js/flat-ui.min.js"></script>
-    <script src="scripts/utils.js"></script>
-    <script src="scripts/login.js"></script>
     <!-- Loading Bootstrap -->
     <link href="styles/dist/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="styles/dist/css/flat-ui.min.css"/>
     <link rel="stylesheet" type="text/css" href="styles/login.css"/>
     <!--loading nprogress-->
     <link rel="stylesheet" type="text/css" href="styles/nprogress.css"/>
-    <script src="scripts/nprogress.js"></script>
+    <script src="scripts/nprogress.js"></script>、
+    <!--PNotify-->
+    <script src="scripts/pnotify.js"></script>
+    <script src="scripts/pnotify.animate.js"></script>
+    <script src="scripts/pnotify.buttons.js"></script>
+    <link href="styles/pnotify.css" rel="stylesheet">
+    <link href="styles/pnotify.buttons.css" rel="stylesheet">
     <!--在线字体-->
     <link href='http://api.youziku.com/webfont/CSS/572ff40df629d806240718f4' rel='stylesheet' type='text/css'/>
     <link rel="shortcut icon" href="images/login/icon.png" type="image/x-icon" />
+
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/login.js"></script>
 </head>
 <body class="container" id="container">
 <div class="login">
@@ -51,7 +58,7 @@
                 </select>
 
                 <a class="btn btn-primary btn-lg btn-block" id="btn_login">登录</a>
-                <a class="login-link" href="#" id="btn_forget_password" data-toggle="modal" data-target="#updatePasswordModal">忘记密码</a>
+                <a class="login-link" href="#" id="btn_update_password" data-toggle="modal" data-target="#updatePasswordModal">修改密码</a>
             </div>
         </form>
     </div>
@@ -85,7 +92,7 @@
      aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="" id="form_update_password">
                 <div class="modal-header">
                     <button type="button" class="close"
                             data-dismiss="modal" aria-hidden="true">

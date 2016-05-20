@@ -4,8 +4,173 @@
     <meta charset="UTF-8">
     <title>教师实验报告管理主页</title>
     <link rel="shortcut icon" href="images/login/icon.png" type="image/x-icon" />
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <!-- Loading Bootstrap -->
+    <link href="styles/dist/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/bootstrap-table/1.10.1/bootstrap-table.min.css" rel="stylesheet"/>
+    <script src="http://cdn.bootcss.com/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap-table/1.10.1/bootstrap-table-locale-all.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap-table/1.10.1/locale/bootstrap-table-zh-CN.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/dist/css/flat-ui.min.css"/>
+    <script src="styles/dist/js/flat-ui.min.js"></script>
+    <!--PNotify-->
+    <script src="scripts/pnotify.js"></script>
+    <script src="scripts/pnotify.animate.js"></script>
+    <script src="scripts/pnotify.buttons.js"></script>
+    <link href="styles/pnotify.css" rel="stylesheet">
+    <link href="styles/pnotify.buttons.css" rel="stylesheet">
+    <!--loading nprogress-->
+    <link rel="stylesheet" type="text/css" href="styles/nprogress.css"/>
+    <script src="scripts/nprogress.js"></script>
+
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/teacher_home.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/teacher_home.css">
 </head>
-<body>
-<p>裤子都脱了，你就给我看这个？</p>
+<body class="container-fluid">
+<ul class="nav nav-tabs container-fluid .navbar-fixed-top" id="navigation">
+    <div class="navbar-header">
+        <a class="navbar-brand">实验报告管理系统</a>
+    </div>
+    <li role="presentation" class="active" id="listAll"><a href="#">展示所有</a></li>
+    <li role="presentation" class="dropdown" id="listByTerm">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">按学期展示<span class="caret"></span></a>
+        <ul class="dropdown-menu" id="term_selector">
+        </ul>
+    </li>
+    <li role="presentation" class="dropdown" id="listByLesson">
+        <a href="#" class="dropdown-toggle"
+           data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">按实验课展示<span class="caret"></span></a>
+        <ul class="dropdown-menu" id="lesson_selector">
+        </ul>
+    </li>
+    <button id="btn_addReport" type="button" class="btn btn-success navbar-right navbar-btn"><span
+            class="glyphicon glyphicon-plus" data-toggle="tooltip"
+            data-original-title="布置实验报告" data-placement="bottom"></span></button>
+    <button id="btn_logout" type="button" class="btn btn-tip navbar-right navbar-btn"><span
+            class="glyphicon glyphicon-off"></span>&nbsp;注销</button>
+    <p class="navbar-text navbar-right" id="welcome">欢迎回来</p>
+</ul>
+<div id="table_container">
+    <table id="table" data-row-style="cardview" data-striped="true"></table>
+</div>
+<div class="navbar-fixed-bottom container-fluid"><p class="center">版权所有@武汉理工大学计算机科学与技术学院Web3Team&nbsp;&nbsp;&nbsp;
+    <a data-toggle="modal" data-target="#contactModal" href="#">联系我</a></p></div>
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <p class="modal-title">关于我</p>
+                </div>
+                <div class="center">
+                    <p class="center">QQ：&nbsp;&nbsp;&nbsp;570495627</p>
+                    <p class="center">邮箱：570495627@qq.com</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="modal fade" id="uploadTemplateModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="" id="form_upload_template">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <p class="modal-title">上传实验模板</p>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                        <input type="password" class="form-control required" value="" placeholder="Password"
+                               data-toggle="tooltip"
+                               data-original-title="密码" data-placement="left"
+                               id="password_for_updateTemplate" name="密码" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <a id="pickfiles" class="btn btn-info"><span class="glyphicon glyphicon-plus">选择文件</span></a>
+                    <div><span class="glyphicon glyphicon-saved" id="selected_file_name"></span></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="summit_template">提交</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="modal fade" id="deleteReportModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="" id="form_delete_report">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <p class="modal-title">上传实验模板</p>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                        <input type="password" class="form-control required" value="" placeholder="Password"
+                               data-toggle="tooltip"
+                               data-original-title="密码" data-placement="left"
+                               id="password_for_deleteReport" name="密码" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="confirmToDelete">确认</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="modal fade" id="updateReportModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="" id="form_update_report">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <p class="modal-title">编辑更新实验报告</p>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                        <input type="password" class="form-control required" value="" placeholder="Password"
+                               data-toggle="tooltip"
+                               data-original-title="密码" data-placement="left"
+                               id="password_for_updateReport" name="密码" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="confirmToUpdate">确认</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
 </body>
 </html>

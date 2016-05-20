@@ -5,6 +5,10 @@ var preUrl='http://localhost:8080/ReportSystem/';
 
 $(document).ready(function () {
     $("#btn_login").click(function () {
+        if (NProgress.isStarted()){
+            notice("我们在为您拼命加载中，请您耐心等待！Loading...",'info');
+            return;
+        }
         if (!validateForm($("#form_login")[0])) {
             return;
         }
@@ -21,20 +25,23 @@ $(document).ready(function () {
             success: function (data) {
                 NProgress.done();
                 if (data.result == "failed") {
-                    alert(data.msg);
+                    notice(data.msg,'error');
                 } else if (data.result == "success") {
-                    alert(data.msg);
                     window.location.href = "student_home.html?userId=" + $("#login-id").val() + "&identity=" + data.identity;
                 }
             },
             error: function (jqXHR) {
                 NProgress.done();
-                alert("似乎出现了些小问题,错误码：" + jqXHR.status);
+                notice("似乎出现了些小问题,错误码：" + jqXHR.status,'error');
             }
         })
     });
     $("#summit_password").click(function () {
-        if (!validateForm($("#form_send_advice")[0])) {
+        if (NProgress.isStarted()){
+            notice("我们在为您拼命加载中，请您耐心等待！Loading...",'info');
+            return;
+        }
+        if (!validateForm($("#form_update_password")[0])) {
             return;
         }
         NProgress.start();
@@ -51,15 +58,15 @@ $(document).ready(function () {
             success: function (data) {
                 NProgress.done();
                 if (data.result == "failed") {
-                    alert(data.msg);
+                    notice(data.msg,'error');
                 } else if (data.result == "success") {
-                    alert(data.msg);
+                    notice(data.msg,'success');
                 }
                 $('#updatePasswordModal').modal('toggle');
             },
             error: function (jqXHR) {
                 NProgress.done();
-                alert("似乎出现了些小问题,无法提交修改");
+                notice("似乎出现了些小问题,无法提交修改",'error');
             }
         })
     });

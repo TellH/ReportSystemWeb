@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{af, aliyun-oss-sdk-4.3.0, ar, bootstrap, bootstrap-datepicker, bootstrap-material-datetimepicker, bootstrap-material-design.iife, bootstrap-table, bootstrap-table-locale-all, bootstrap-table-zh-CN, jquery, md5, metro, qiniu}" />
+    <file url="PROJECT" libraries="{af, aliyun-oss-sdk-4.3.0, ar, bootstrap, bootstrap-datepicker, bootstrap-material-datetimepicker, bootstrap-material-design.iife, bootstrap-table, bootstrap-table-locale-all, bootstrap-table-zh-CN, jquery, md5, metro, pnotify, qiniu}" />
   </component>
 </project>

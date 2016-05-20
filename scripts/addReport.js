@@ -5,9 +5,13 @@ var preUrl = 'http://localhost:8080/ReportSystem/';
 var uploader;
 var templateUrl;
 function summitToAddReport() {
+    if (NProgress.isStarted()){
+        notice("我们在为您拼命加载中，请您耐心等待！Loading...",'success');
+        return;
+    }
     NProgress.start();
     var params = {
-        userId: 3914/*$.getUrlParam('userId')*/,
+        userId: $.getUrlParam('userId'),
         password: $("#inputPassword").val(),
         reportName: $("#inputReportTitle").val(),
         content: $("#content").val(),
@@ -31,14 +35,14 @@ function summitToAddReport() {
         success: function (data) {
             NProgress.done();
             if (data.result == 'success') {
-                alert("发布成功！");
+                notice("发布成功！",'success');
             } else {
-                alert(data.msg);
+                notice(data.msg,'error');
             }
         },
         error: function (jqXHR) {
             NProgress.done();
-            alert("似乎出现了些小问题,实验报告没布置成功");
+            notice("似乎出现了些小问题,实验报告没布置成功",'error');
         }
     })
 }
@@ -57,7 +61,7 @@ function initLessonSelecter() {
         url: preUrl + "lesson/listByTerm4Teacher.do",
         dataType: 'json',
         data: {
-            userId: 3914/*$.getUrlParam('userId')*/,
+            userId: $.getUrlParam('userId'),
             term: thisTerm
         },
         success: function (data) {
@@ -128,7 +132,7 @@ function initUploader() {
             'Error': function (up, err, errTip) {
                 //上传出错时,处理相关的事情
                 NProgress.done();
-                alert('上传实验模板出错，请检查网络设置并重新提交表单！');
+                notice('上传实验模板出错，请检查网络设置并重新提交表单！','error');
             }
         }
     });

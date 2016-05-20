@@ -58,13 +58,54 @@ function resetFields(whichForm) {
 $(function () {
     $('[data-toggle=tooltip]').tooltip();
 });
-$(document).on('page:fetch', function () {
-    NProgress.start();
-});
-$(document).on('page:change', function () {
-    NProgress.done();
-});
-$(document).on('page:restore', function () {
-    NProgress.remove();
-});
-NProgress.inc();
+function notice(text, type) {
+    switch (type){
+        case 'success':
+            new PNotify({
+                text: text,
+                type: 'success',
+                buttons: {
+                    closer: true
+                }
+            });
+            break;
+        case 'error':
+            new PNotify({
+                text: text,
+                type: 'error',
+                buttons: {
+                    closer: true
+                }
+            });
+            break;
+        case 'info':
+            new PNotify({
+                text: text,
+                type: 'info',
+                buttons: {
+                    closer: true
+                }
+            });
+            break;
+        default:
+            new PNotify({
+                text: text,
+                type: 'info',
+                buttons: {
+                    closer: true
+                }
+            });
+            break;
+    }
+}
+// $(document).on('page:fetch', function () {
+//     NProgress.start();
+// });
+// $(document).on('page:change', function () {
+//     NProgress.done();
+// });
+// $(document).on('page:restore', function () {
+//     NProgress.remove();
+// });
+// NProgress.inc();
+PNotify.prototype.options.styling = "bootstrap3";
