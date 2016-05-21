@@ -5,11 +5,17 @@ var preUrl = 'http://localhost:8080/ReportSystem/';
 var selectedReportId;
 var selectedTerm;
 var selectedLesson;
+var selectedRow;
 var pageData;
 var table;
 var returnTemplateUrl;
 $(document).ready(function () {
     initNavigationBar();
+    $('#deadline').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true
+    });
     table = $('#table');
     list(preUrl + 'report/teacher/listAll.do', getListAllParam);
     $("#selected_file_name")[0].style.display = "none";
@@ -103,6 +109,9 @@ $(document).ready(function () {
                 notice("似乎出现了些小问题,无法删除，请稍后再试~", 'error');
             }
         });
+    });
+    $("#btn_addReport").click(function () {
+        window.open("add_report.html?userId=" + $.getUrlParam('userId') + "&identity=" + 1, "_blank");
     });
     $(".navbar-brand").attr("href", preUrl);
 });
@@ -492,6 +501,64 @@ function operateFormatter(value, row, index) {
         '</a>'
     ].join('');
 }
+function initUpdateReportModel(row) {
+    $("#inputReportTitle").val(row.name);
+    $("#content").val(row.content);
+    $("#note").val(row.note);
+    $("#college").val(row.college);
+    $("#major").val(row.major);
+    $("#deadline").val(row.date_to);
+    if (row.location == '余区') {
+        $("#optionsRadios1").attr('checked', true);
+        $("#optionsRadios2").attr('checked', false);
+    } else {
+        $("#optionsRadios1").attr('checked', false);
+        $("#optionsRadios2").attr('checked', true);
+    }
+    $("#btn_update_report").click(function () {
+        if (NProgress.isStarted()) {
+            notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'info');
+            return;
+        }
+        NProgress.start();
+        $.ajax({
+            type: "POST",
+            url: preUrl + "report/teacher/delete.do",
+            dataType: 'json',
+            data: validateUpdateReportForm(),
+            success: function (data) {
+                NProgress.done();
+                if (data.result == "success") {
+                    notice(data.msg, 'success');
+                    table.refresh();
+                    $("#updateReportModal").hide();
+                } else {
+                    notice(data.msg, 'error');
+                }
+            },
+            error: function (jqXHR) {
+                NProgress.done();
+                notice("似乎出现了些小问题,无法删除，请稍后再试~", 'error');
+            }
+        });
+    });
+}
+function validateUpdateReportForm() {
+    var params = {
+        userId: $.getUrlParam('userId'),
+        password: $("#inputPassword").val(),
+        reportId: selectedReportId
+    };
+    var inputContent = $("#content");
+    if (selectedRow.content != inputContent.val() && inputContent.val() != '') params.content = inputContent.val();
+    var inputReportTitle = $("#inputReportTitle");
+    if (selectedRow.name != inputReportTitle.val() && inputReportTitle.val() != '') params.reportName = inputReportTitle.val();
+    var timepicker = $("#deadline");
+    if (selectedRow.date_to != timepicker.val() && timepicker.val() != '') params.deadline = timepicker.val();
+    var inputNote = $("#note");
+    if (selectedRow.note != inputNote.val() && inputNote.val() != '') params.note = inputNote.val();
+    return params;
+}
 window.operateEvents = {
     'click .download': function (e, value, row, index) {
         if (row.templateUrl) {
@@ -505,9 +572,10 @@ window.operateEvents = {
     },
     'click .update': function (e, value, row, index) {
         selectedReportId = row.reportId;
+        selectedRow = row;
+        initUpdateReportModel(row);
     },
     'click .delete': function (e, value, row, index) {
         selectedReportId = row.reportId;
-
     }
 };

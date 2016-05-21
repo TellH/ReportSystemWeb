@@ -6,7 +6,7 @@ var uploader;
 var templateUrl;
 function summitToAddReport() {
     if (NProgress.isStarted()){
-        notice("我们在为您拼命加载中，请您耐心等待！Loading...",'success');
+        notice("我们在为您拼命加载中，请您耐心等待！Loading...",'info');
         return;
     }
     NProgress.start();
