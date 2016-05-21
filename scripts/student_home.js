@@ -8,7 +8,9 @@ var selectedStatus;
 var pageData;
 var table;
 var returnReportUrl;
+var userId;
 $(document).ready(function () {
+    userId=$.getUrlParam('userId');
     initNavigationBar();
     table = $('#table');
     list(preUrl + 'report/student/listAll.do', getListAllParam);
@@ -53,7 +55,7 @@ $(document).ready(function () {
             uploader.splice(0, 1);
         }
         var file = uploader.files[0];
-        file.name = $.getUrlParam('userId') + selectedReportId + file.name;
+        file.name = userId + selectedReportId + file.name;
     });
     $("#summit_report").click(function () {
         if (NProgress.isStarted()) {
@@ -83,7 +85,7 @@ $(document).ready(function () {
             url: preUrl + "report/student/update.do",
             dataType: 'json',
             data: {
-                userId: $.getUrlParam('userId'),
+                userId: userId,
                 password: $("#password").val(),
                 reportId: selectedReportId,
                 advice: $("#advice").val()
@@ -111,7 +113,7 @@ function updateReportUrl() {
         url: preUrl + "report/student/update.do",
         dataType: 'json',
         data: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             password: $("#password_for_updateReport").val(),
             reportId: selectedReportId,
             docUrl: reportUrl
@@ -246,7 +248,7 @@ function initNavigationBar() {
         url: preUrl + "account/getInfo.do",
         dataType: 'json',
         data: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             identity: $.getUrlParam('identity')
         },
         success: function (data) {
@@ -345,14 +347,14 @@ function getListAllParam(params) {
         return {
             url: preUrl + "report/student/listAll.do",
             query: {
-                userId: $.getUrlParam('userId'),
+                userId: userId,
                 itemNum: table.bootstrapTable('getOptions').pageSize,
                 page: table.bootstrapTable('getOptions').pageNumber
             }
         }
     }
     return {
-        userId: $.getUrlParam('userId'),
+        userId: userId,
         itemNum: params.limit,
         page: table.bootstrapTable('getOptions').pageNumber
     };
@@ -361,7 +363,7 @@ function getListByTermParam() {
     return {
         url: preUrl + "report/student/listByTerm.do",
         query: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             term: selectedTerm,
             itemNum: table.bootstrapTable('getOptions').pageSize,
             page: table.bootstrapTable('getOptions').pageNumber
@@ -372,7 +374,7 @@ function getListByStatusParam() {
     return {
         url: preUrl + "report/student/listByStatus.do",
         query: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             status: selectedStatus,
             itemNum: table.bootstrapTable('getOptions').pageSize,
             page: table.bootstrapTable('getOptions').pageNumber
@@ -426,7 +428,7 @@ function detailFormatter(index, row) {
         dataType: 'json',
         async: false,
         data: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             reportId: row.reportId
         },
         success: function (data) {
@@ -552,7 +554,7 @@ window.operateEvents = {
             dataType: 'json',
             async: false,
             data: {
-                userId: $.getUrlParam('userId'),
+                userId: userId,
                 reportId: row.reportId
             },
             success: function (data) {
