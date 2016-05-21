@@ -9,7 +9,9 @@ var selectedRow;
 var pageData;
 var table;
 var returnTemplateUrl;
+var userId;
 $(document).ready(function () {
+    userId = $.getUrlParam('userId');
     initNavigationBar();
     $('#deadline').datepicker({
         format: 'yyyy-mm-dd',
@@ -59,7 +61,7 @@ $(document).ready(function () {
             uploader.splice(0, 1);
         }
         var file = uploader.files[0];
-        file.name = $.getUrlParam('userId') + selectedReportId + file.name;
+        file.name = userId + selectedReportId + file.name;
     });
     $("#summit_template").click(function () {
         if (NProgress.isStarted()) {
@@ -90,7 +92,7 @@ $(document).ready(function () {
             url: preUrl + "report/teacher/delete.do",
             dataType: 'json',
             data: {
-                userId: $.getUrlParam('userId'),
+                userId: userId,
                 reportId: selectedReportId,
                 password: $("#password_for_deleteReport").val()
             },
@@ -111,7 +113,7 @@ $(document).ready(function () {
         });
     });
     $("#btn_addReport").click(function () {
-        window.open("add_report.html?userId=" + $.getUrlParam('userId') + "&identity=" + 1, "_blank");
+        window.open("add_report.html?userId=" + userId + "&identity=" + 1, "_blank");
     });
     $(".navbar-brand").attr("href", preUrl);
 });
@@ -122,7 +124,7 @@ function updateTemplateUrl() {
         url: preUrl + "report/teacher/update.do",
         dataType: 'json',
         data: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             password: $("#password_for_updateTemplate").val(),
             reportId: selectedReportId,
             templateUrl: returnTemplateUrl
@@ -246,7 +248,7 @@ function initNavigationBar() {
         url: preUrl + "account/getInfo.do",
         dataType: 'json',
         data: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             identity: $.getUrlParam('identity')
         },
         success: function (data) {
@@ -280,7 +282,7 @@ function addLessonListItem() {
         url: preUrl + "lesson/listByTerm4Teacher.do",
         dataType: 'json',
         data: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             term: thisTerm
         },
         success: function (data) {
@@ -383,14 +385,14 @@ function getListAllParam(params) {
         return {
             url: preUrl + "report/teacher/listAll.do",
             query: {
-                userId: $.getUrlParam('userId'),
+                userId: userId,
                 itemNum: table.bootstrapTable('getOptions').pageSize,
                 page: table.bootstrapTable('getOptions').pageNumber
             }
         }
     }
     return {
-        userId: $.getUrlParam('userId'),
+        userId: userId,
         itemNum: params.limit,
         page: table.bootstrapTable('getOptions').pageNumber
     };
@@ -399,7 +401,7 @@ function getListByTermParam() {
     return {
         url: preUrl + "report/teacher/listByTerm.do",
         query: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             term: selectedTerm,
             itemNum: table.bootstrapTable('getOptions').pageSize,
             page: table.bootstrapTable('getOptions').pageNumber
@@ -410,7 +412,7 @@ function getListByLessonParam() {
     return {
         url: preUrl + "report/teacher/listByLesson.do",
         query: {
-            userId: $.getUrlParam('userId'),
+            userId: userId,
             lessonId: selectedLesson,
             itemNum: table.bootstrapTable('getOptions').pageSize,
             page: table.bootstrapTable('getOptions').pageNumber
@@ -496,6 +498,9 @@ function operateFormatter(value, row, index) {
         '<a class="update" href="javascript:void(0)" title="编辑实验报告" data-toggle="modal" data-target="#updateReportModal">',
         '<i class="glyphicon glyphicon-pencil"></i>',
         '</a>&nbsp;',
+        '<a class="score" href="javascript:void(0)" target="_blank" title="批改实验报告">',
+        '<i class="material-icons">spellcheck</i>',
+        '</a>&nbsp;',
         '<a class="delete" href="javascript:void(0)" title="删除实验报告" data-toggle="modal" data-target="#deleteReportModal">',
         '<i class="glyphicon glyphicon-remove"></i>',
         '</a>'
@@ -545,7 +550,7 @@ function initUpdateReportModel(row) {
 }
 function validateUpdateReportForm() {
     var params = {
-        userId: $.getUrlParam('userId'),
+        userId: userId,
         password: $("#inputPassword").val(),
         reportId: selectedReportId
     };
@@ -574,6 +579,9 @@ window.operateEvents = {
         selectedReportId = row.reportId;
         selectedRow = row;
         initUpdateReportModel(row);
+    },
+    'click .score': function (e, value, row, index) {
+        window.open("score_report.html?userId=" + userId + "&reportId=" + row.reportId, "_blank");
     },
     'click .delete': function (e, value, row, index) {
         selectedReportId = row.reportId;
