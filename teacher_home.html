@@ -22,6 +22,10 @@
     <!--loading nprogress-->
     <link rel="stylesheet" type="text/css" href="styles/nprogress.css"/>
     <script src="scripts/nprogress.js"></script>
+    <!--qiniu-->
+    <script src="scripts/moxie.min.js"></script>
+    <script src="scripts/plupload.full.min.js"></script>
+    <script src="scripts/qiniu.min.js"></script>
 
     <script src="scripts/utils.js"></script>
     <script src="scripts/teacher_home.js"></script>
@@ -46,12 +50,11 @@
         <ul class="dropdown-menu" id="lesson_selector">
         </ul>
     </li>
-    <button id="btn_addReport" type="button" class="btn btn-success navbar-right navbar-btn"><span
-            class="glyphicon glyphicon-plus" data-toggle="tooltip"
-            data-original-title="布置实验报告" data-placement="bottom"></span></button>
-    <button id="btn_logout" type="button" class="btn btn-tip navbar-right navbar-btn"><span
-            class="glyphicon glyphicon-off"></span>&nbsp;注销</button>
     <p class="navbar-text navbar-right" id="welcome">欢迎回来</p>
+    <button id="btn_logout" type="button" class="btn btn-tip navbar-right navbar-btn" data-toggle="tooltip"
+    data-original-title="注销" data-placement="bottom">&nbsp;<span class="glyphicon glyphicon-off"></span></button>
+    <button id="btn_addReport" type="button" class="btn btn-success navbar-right navbar-btn" data-toggle="tooltip"
+            data-original-title="布置实验报告" data-placement="bottom"><span class="glyphicon glyphicon-plus"></span></button>
 </ul>
 <div id="table_container">
     <table id="table" data-row-style="cardview" data-striped="true"></table>
@@ -124,7 +127,7 @@
                             data-dismiss="modal" aria-hidden="true">
                         &times;
                     </button>
-                    <p class="modal-title">上传实验模板</p>
+                    <p class="modal-title">您确定要删除实验报告吗？</p>
                 </div>
                 <div class="form-group">
                     <div class="input-group">

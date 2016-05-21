@@ -7,7 +7,7 @@ var selectedTerm;
 var selectedLesson;
 var pageData;
 var table;
-
+var returnTemplateUrl;
 $(document).ready(function () {
     initNavigationBar();
     table = $('#table');
@@ -38,35 +38,12 @@ $(document).ready(function () {
             'FileUploaded': function (up, file, info) {
                 var domain = up.getOption('domain');
                 var res = eval('(' + info + ')');
-                var templateUrl = 'http://' + domain + '/' + res.key; //获取上传成功后的文件的Url
-                $.ajax({
-                    type: "POST",
-                    url: preUrl + "report/teacher/update.do",
-                    dataType: 'json',
-                    data: {
-                        userId: $.getUrlParam('userId'),
-                        password: $("#password_for_updateTemplate").val(),
-                        reportId: selectedReportId,
-                        templateUrl: templateUrl
-                    },
-                    success: function (data) {
-                        NProgress.done();
-                        if (data.result == "failed") {
-                            notice(data.msg,'error');
-                        } else if (data.result == "success") {
-                            $('#uploadTemplateModal').modal('toggle');
-                            notice(data.msg,'success');
-                        }
-                    },
-                    error: function (jqXHR) {
-                        NProgress.done();
-                        notice("似乎出现了些小问题,错误码：" + jqXHR.status,'error');
-                    }
-                });
+                returnTemplateUrl = 'http://' + domain + '/' + res.key; //获取上传成功后的文件的Url
+                updateTemplateUrl();
             },
             'Error': function (up, err, errTip) {
                 //上传出错时,处理相关的事情
-                notice("上传失败，"+errTip,'error');
+                notice("上传失败，" + errTip, 'error');
             }
         }
     });
@@ -79,21 +56,26 @@ $(document).ready(function () {
         file.name = $.getUrlParam('userId') + selectedReportId + file.name;
     });
     $("#summit_template").click(function () {
-        if (NProgress.isStarted()){
-            notice("我们在为您拼命加载中，请您耐心等待！Loading...",'info');
+        if (NProgress.isStarted()) {
+            notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'info');
             return;
         }
         if (!validateForm($("#form_upload_template")[0])) {
             return;
         }
-        uploader.start();
+        if (!returnTemplateUrl)
+            uploader.start();
+        else {
+            NProgress.start();
+            updateTemplateUrl();
+        }
     });
     $("#confirmToDelete").click(function () {
-        if (NProgress.isStarted()){
-            notice("我们在为您拼命加载中，请您耐心等待！Loading...",'info');
+        if (NProgress.isStarted()) {
+            notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'info');
             return;
         }
-        if (!validateForm($("#form_upload_template")[0])) {
+        if (!validateForm($("#form_delete_report")[0])) {
             return;
         }
         NProgress.start();
@@ -104,26 +86,53 @@ $(document).ready(function () {
             data: {
                 userId: $.getUrlParam('userId'),
                 reportId: selectedReportId,
-                password:$("#password_for_deleteReport").val()
+                password: $("#password_for_deleteReport").val()
             },
             success: function (data) {
                 NProgress.done();
                 if (data.result == "success") {
-                    notice(data.msg,'success');
+                    notice(data.msg, 'success');
                     table.refresh();
                     $("#deleteReportModal").hide();
-                }else {
-                    notice(data.msg,'error');
+                } else {
+                    notice(data.msg, 'error');
                 }
             },
-            error:function (jqXHR) {
+            error: function (jqXHR) {
                 NProgress.done();
-                notice("似乎出现了些小问题,无法删除，请稍后再试~",'error');
+                notice("似乎出现了些小问题,无法删除，请稍后再试~", 'error');
             }
         });
     });
     $(".navbar-brand").attr("href", preUrl);
 });
+
+function updateTemplateUrl() {
+    $.ajax({
+        type: "POST",
+        url: preUrl + "report/teacher/update.do",
+        dataType: 'json',
+        data: {
+            userId: $.getUrlParam('userId'),
+            password: $("#password_for_updateTemplate").val(),
+            reportId: selectedReportId,
+            templateUrl: returnTemplateUrl
+        },
+        success: function (data) {
+            NProgress.done();
+            if (data.result == "failed") {
+                notice(data.msg, 'error');
+            } else if (data.result == "success") {
+                $('#uploadTemplateModal').modal('toggle');
+                notice(data.msg, 'success');
+            }
+        },
+        error: function (jqXHR) {
+            NProgress.done();
+            notice("似乎出现了些小问题,错误码：" + jqXHR.status, 'error');
+        }
+    });
+}
 function list(url, getParams) {
     $("#table").bootstrapTable({
         columns: [{
@@ -137,11 +146,6 @@ function list(url, getParams) {
             field: 'content',
             align: 'center',
             width: "30%",
-            valign: 'middle'
-        }, {
-            title: '指导老师',
-            field: 'teacher.name',
-            align: 'center',
             valign: 'middle'
         }, {
             title: '课程',
@@ -167,13 +171,6 @@ function list(url, getParams) {
             width: "20px",
             valign: 'middle'
         }, {
-            title: '模板',
-            field: 'templateUrl',
-            align: 'center',
-            valign: 'middle',
-            width: "1%",
-            formatter: templateUrlFormatter
-        }, {
             title: '操作',
             align: 'center',
             valign: 'middle',
@@ -198,7 +195,7 @@ function list(url, getParams) {
         url: url,
         pagination: true,
         sidePagination: "server",
-        pageSize: 10,
+        pageSize: 5,
         queryParams: getParams,
         responseHandler: responseHandler
     });
@@ -207,8 +204,8 @@ function initNavigationBar() {
     addTermListItem();
     addLessonListItem();
     $("#btn_logout").click(function () {
-        if (NProgress.isStarted()){
-            notice("我们在为您拼命加载中，请您耐心等待！Loading...",'info');
+        if (NProgress.isStarted()) {
+            notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'info');
             return;
         }
         NProgress.start();
@@ -219,14 +216,14 @@ function initNavigationBar() {
             success: function (data) {
                 NProgress.done();
                 if (data.result == "failed") {
-                    notice(data.msg,'error');
+                    notice(data.msg, 'error');
                 } else {
                     window.open("login.html", "_self");
                 }
             },
             error: function (jqXHR) {
                 NProgress.done();
-                notice("似乎出现了些小问题,无法注销",'error');
+                notice("似乎出现了些小问题,无法注销", 'error');
             }
         })
     });
@@ -248,7 +245,7 @@ function initNavigationBar() {
                 var userName = data.user.name;
                 $("#welcome")[0].innerText = 'hi!' + userName + '老师';
             } else {
-                notice(data.msg,'info');
+                notice(data.msg, 'info');
             }
         }
     });
@@ -405,7 +402,7 @@ function getListByLessonParam() {
         url: preUrl + "report/teacher/listByLesson.do",
         query: {
             userId: $.getUrlParam('userId'),
-            term: selectedLesson,
+            lessonId: selectedLesson,
             itemNum: table.bootstrapTable('getOptions').pageSize,
             page: table.bootstrapTable('getOptions').pageNumber
         }
@@ -479,23 +476,6 @@ function detailFormatter(index, row) {
     return html.join('');
 }
 
-function templateUrlFormatter(value, row, index) {
-    if (row.templateUrl) {
-        return [
-            '<a target="_blank" title="下载" href="' + row.templateUrl + '">',
-            '<span class="fui-link"></span>',
-            '</a>'
-        ].join('');
-    } else {
-        return [
-            '<a target="_blank" title="暂无实验报告模板" disabled>',
-            '<span class="fui-link"></span>',
-            '</a>'
-        ].join('');
-    }
-
-}
-
 function operateFormatter(value, row, index) {
     return [
         '<a class="download" href="javascript:void(0)" title="下载模板">',
@@ -507,7 +487,7 @@ function operateFormatter(value, row, index) {
         '<a class="update" href="javascript:void(0)" title="编辑实验报告" data-toggle="modal" data-target="#updateReportModal">',
         '<i class="glyphicon glyphicon-pencil"></i>',
         '</a>&nbsp;',
-        '<a class="delete" href="javascript:void(0)" title="删除实验报告" data-toggle="modal" data-target="#updateAdviceModal">',
+        '<a class="delete" href="javascript:void(0)" title="删除实验报告" data-toggle="modal" data-target="#deleteReportModal">',
         '<i class="glyphicon glyphicon-remove"></i>',
         '</a>'
     ].join('');
@@ -517,7 +497,7 @@ window.operateEvents = {
         if (row.templateUrl) {
             window.open(row.templateUrl, "_blank");
         } else {
-            notice("你还没上传实验报告模板呢！",'error');
+            notice("你还没上传实验报告模板呢！", 'error');
         }
     },
     'click .upload': function (e, value, row, index) {
@@ -528,6 +508,6 @@ window.operateEvents = {
     },
     'click .delete': function (e, value, row, index) {
         selectedReportId = row.reportId;
-        
+
     }
 };

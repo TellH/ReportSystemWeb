@@ -7,6 +7,7 @@ var selectedTerm;
 var selectedStatus;
 var pageData;
 var table;
+var returnReportUrl;
 $(document).ready(function () {
     initNavigationBar();
     table = $('#table');
@@ -37,35 +38,12 @@ $(document).ready(function () {
             'FileUploaded': function (up, file, info) {
                 var domain = up.getOption('domain');
                 var res = eval('(' + info + ')');
-                var reportUrl = 'http://' + domain + '/' + res.key; //获取上传成功后的文件的Url
-                $.ajax({
-                    type: "POST",
-                    url: preUrl + "report/student/update.do",
-                    dataType: 'json',
-                    data: {
-                        userId: $.getUrlParam('userId'),
-                        password: $("#password_for_updateReport").val(),
-                        reportId: selectedReportId,
-                        docUrl: reportUrl
-                    },
-                    success: function (data) {
-                        NProgress.done();
-                        if (data.result == "failed") {
-                            notice(data.msg,'error');
-                        } else if (data.result == "success") {
-                            $('#uploadReportModal').modal('toggle');
-                            notice(data.msg,'success');
-                        }
-                    },
-                    error: function (jqXHR) {
-                        notice("似乎出现了些小问题,错误码：" + jqXHR.status,'error');
-                        NProgress.done();
-                    }
-                });
+                returnReportUrl = 'http://' + domain + '/' + res.key; //获取上传成功后的文件的Url
+                updateReportUrl();
             },
             'Error': function (up, err, errTip) {
                 //上传出错时,处理相关的事情
-                notice('上传失败，'+errTip,'error');
+                notice('上传失败，' + errTip, 'error');
             }
         }
     });
@@ -78,18 +56,23 @@ $(document).ready(function () {
         file.name = $.getUrlParam('userId') + selectedReportId + file.name;
     });
     $("#summit_report").click(function () {
-        if (NProgress.isStarted()){
-            notice("我们在为您拼命加载中，请您耐心等待！Loading...",'success');
+        if (NProgress.isStarted()) {
+            notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'success');
             return;
         }
         if (!validateForm($("#form_upload_report")[0])) {
             return;
         }
-        uploader.start();
+        if (!returnReportUrl)
+            uploader.start();
+        else {
+            NProgress.start();
+            updateReportUrl();
+        }
     });
     $("#summit_advice").click(function () {
-        if (NProgress.isStarted()){
-            notice("我们在为您拼命加载中，请您耐心等待！Loading...",'success');
+        if (NProgress.isStarted()) {
+            notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'success');
             return;
         }
         if (!validateForm($("#form_send_advice")[0])) {
@@ -108,20 +91,46 @@ $(document).ready(function () {
             success: function (data) {
                 NProgress.done();
                 if (data.result == "failed") {
-                    notice(data.msg,'error');
+                    notice(data.msg, 'error');
                 } else if (data.result == "success") {
-                    notice(data.msg,'success');
+                    notice(data.msg, 'success');
                 }
                 $('#updateAdviceModal').modal('toggle');
             },
             error: function (jqXHR) {
                 NProgress.done();
-                notice("似乎出现了些小问题,无法提交修改",'error');
+                notice("似乎出现了些小问题,无法提交修改", 'error');
             }
         });
     });
     $(".navbar-brand").attr("href", preUrl);
 });
+function updateReportUrl() {
+    $.ajax({
+        type: "POST",
+        url: preUrl + "report/student/update.do",
+        dataType: 'json',
+        data: {
+            userId: $.getUrlParam('userId'),
+            password: $("#password_for_updateReport").val(),
+            reportId: selectedReportId,
+            docUrl: reportUrl
+        },
+        success: function (data) {
+            NProgress.done();
+            if (data.result == "failed") {
+                notice(data.msg, 'error');
+            } else if (data.result == "success") {
+                $('#uploadReportModal').modal('toggle');
+                notice(data.msg, 'success');
+            }
+        },
+        error: function (jqXHR) {
+            notice("似乎出现了些小问题,错误码：" + jqXHR.status, 'error');
+            NProgress.done();
+        }
+    });
+}
 function list(url, getParams) {
     $("#table").bootstrapTable({
         columns: [{
@@ -204,8 +213,8 @@ function list(url, getParams) {
 function initNavigationBar() {
     addTermListItem();
     $("#btn_logout").click(function () {
-        if (NProgress.isStarted()){
-            notice("我们在为您拼命加载中，请您耐心等待！Loading...",'info');
+        if (NProgress.isStarted()) {
+            notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'info');
             return;
         }
         NProgress.start();
@@ -216,14 +225,14 @@ function initNavigationBar() {
             success: function (data) {
                 NProgress.done();
                 if (data.result == "failed") {
-                    notice(data.msg,'error');
+                    notice(data.msg, 'error');
                 } else {
                     window.open("login.html", "_self");
                 }
             },
             error: function (jqXHR) {
                 NProgress.done();
-                notice("似乎出现了些小问题,无法注销",'error');
+                notice("似乎出现了些小问题,无法注销", 'error');
             }
         })
     });
@@ -498,7 +507,7 @@ function detailFormatter(index, row) {
         },
         error: function (jqXHR) {
             NProgress.done();
-            notice("似乎出现了些小问题,错误码：" + jqXHR.status,'error');
+            notice("似乎出现了些小问题,错误码：" + jqXHR.status, 'error');
         }
     });
     return html.join('');
@@ -552,13 +561,13 @@ window.operateEvents = {
                     if (data.data[0].docUrl) {
                         window.open(data.data[0].docUrl, "_blank");
                     } else {
-                        notice("你的实验报告还没提交呢！",'error');
+                        notice("你的实验报告还没提交呢！", 'error');
                     }
                 }
             },
             error: function (jqXHR) {
                 NProgress.done();
-                notice("似乎出现了些小问题,错误码：" + jqXHR.status,'error');
+                notice("似乎出现了些小问题,错误码：" + jqXHR.status, 'error');
             }
         });
     },
