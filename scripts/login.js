@@ -1,7 +1,7 @@
 /**
  * Created by tlh on 2016/5/8.
  */
-var preUrl = 'http://localhost:8080/ReportSystem/';
+var preUrl = '';
 
 $(document).ready(function () {
     $("#btn_login").click(function () {

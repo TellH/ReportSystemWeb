@@ -1,7 +1,7 @@
 /**
  * Created by tlh on 2016/5/13.
  */
-var preUrl = 'http://localhost:8080/ReportSystem/';
+var preUrl = '';
 var selectedReportId;
 var selectedTerm;
 var selectedLesson;
@@ -10,6 +10,7 @@ var pageData;
 var table;
 var returnTemplateUrl;
 var userId;
+var selectedParams = getListAllParam;
 $(document).ready(function () {
     userId = $.getUrlParam('userId');
     initNavigationBar();
@@ -100,8 +101,8 @@ $(document).ready(function () {
                 NProgress.done();
                 if (data.result == "success") {
                     notice(data.msg, 'success');
-                    table.refresh();
-                    $("#deleteReportModal").hide();
+                    refreshTable();
+                    $("#deleteReportModal").modal('toggle');
                 } else {
                     notice(data.msg, 'error');
                 }
@@ -117,7 +118,9 @@ $(document).ready(function () {
     });
     $(".navbar-brand").attr("href", preUrl);
 });
-
+function refreshTable() {
+    table.bootstrapTable('refresh', selectedParams());
+}
 function updateTemplateUrl() {
     $.ajax({
         type: "POST",
@@ -135,6 +138,7 @@ function updateTemplateUrl() {
                 notice(data.msg, 'error');
             } else if (data.result == "success") {
                 $('#uploadTemplateModal').modal('toggle');
+                refreshTable();
                 notice(data.msg, 'success');
             }
         },
@@ -241,7 +245,8 @@ function initNavigationBar() {
     $("#listAll").click(function () {
         switchTab($(this));
         NProgress.start();
-        table.bootstrapTable('refresh', getListAllParam());
+        selectedParams = getListAllParam;
+        refreshTable();
     });
     $.ajax({
         type: "POST",
@@ -260,8 +265,6 @@ function initNavigationBar() {
             }
         }
     });
-
-
 }
 function switchTab(tab) {
     $("li").removeClass('active');
@@ -372,13 +375,15 @@ function onclickTermListItem() {
     switchTab($("#listByTerm"));
     selectedTerm = $(this).attr('value');
     NProgress.start();
-    table.bootstrapTable('refresh', getListByTermParam());
+    selectedParams = getListByTermParam;
+    refreshTable();
 }
 function onclickLessonListItem() {
     switchTab($("#listByLesson"));
     selectedLesson = $(this).attr('value');
     NProgress.start();
-    table.bootstrapTable('refresh', getListByLessonParam());
+    selectedParams = getListByLessonParam;
+    refreshTable();
 }
 function getListAllParam(params) {
     if (!params) {
@@ -520,13 +525,6 @@ function initUpdateReportModel(row) {
     $("#college").val(row.college);
     $("#major").val(row.major);
     $("#deadline").val(row.date_to);
-    if (row.location == '余区') {
-        $("#optionsRadios1").attr('checked', true);
-        $("#optionsRadios2").attr('checked', false);
-    } else {
-        $("#optionsRadios1").attr('checked', false);
-        $("#optionsRadios2").attr('checked', true);
-    }
     $("#btn_update_report").click(function () {
         if (NProgress.isStarted()) {
             notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'info');
@@ -540,13 +538,13 @@ function initUpdateReportModel(row) {
             type: "POST",
             url: preUrl + "report/teacher/update.do",
             dataType: 'json',
-            data: validateUpdateReportForm(),
+            data: validateUpdateReportForm(row),
             success: function (data) {
                 NProgress.done();
                 if (data.result == "success") {
                     notice(data.msg, 'success');
-                    $("#updateReportModal").hide();
-                    table.refresh();
+                    refreshTable();
+                    $("#updateReportModal").modal('toggle');
                 } else {
                     notice(data.msg, 'error');
                 }
@@ -558,7 +556,7 @@ function initUpdateReportModel(row) {
         });
     });
 }
-function validateUpdateReportForm() {
+function validateUpdateReportForm(row) {
     var params = {
         userId: userId,
         password: $("#inputPassword").val(),

@@ -1,7 +1,7 @@
 /**
  * Created by tlh on 2016/5/16.
  */
-var preUrl = 'http://localhost:8080/ReportSystem/';
+var preUrl = '';
 var uploader;
 var templateUrl;
 function summitToAddReport() {
