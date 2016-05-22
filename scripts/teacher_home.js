@@ -254,7 +254,7 @@ function initNavigationBar() {
         success: function (data) {
             if (data.result == "success") {
                 var userName = data.user.name;
-                $("#welcome")[0].innerText = 'hi!' + userName + '老师';
+                $("#welcome")[0].innerText = 'hi!  ' + userName + '老师';
             } else {
                 notice(data.msg, 'info');
             }
@@ -507,6 +507,13 @@ function operateFormatter(value, row, index) {
     ].join('');
 }
 function initUpdateReportModel(row) {
+    $("#inputReportTitle").val('');
+    $("#content").val('');
+    $("#note").val('');
+    $("#college").val('');
+    $("#major").val('');
+    $("#deadline").val('');
+
     $("#inputReportTitle").val(row.name);
     $("#content").val(row.content);
     $("#note").val(row.note);
@@ -525,25 +532,28 @@ function initUpdateReportModel(row) {
             notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'info');
             return;
         }
+        if (!validateForm($("#form_update_report")[0])) {
+            return;
+        }
         NProgress.start();
         $.ajax({
             type: "POST",
-            url: preUrl + "report/teacher/delete.do",
+            url: preUrl + "report/teacher/update.do",
             dataType: 'json',
             data: validateUpdateReportForm(),
             success: function (data) {
                 NProgress.done();
                 if (data.result == "success") {
                     notice(data.msg, 'success');
-                    table.refresh();
                     $("#updateReportModal").hide();
+                    table.refresh();
                 } else {
                     notice(data.msg, 'error');
                 }
             },
             error: function (jqXHR) {
                 NProgress.done();
-                notice("似乎出现了些小问题,无法删除，请稍后再试~", 'error');
+                notice("似乎出现了些小问题,无法更新，请稍后再试~", 'error');
             }
         });
     });
