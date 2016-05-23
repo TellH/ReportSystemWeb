@@ -81,7 +81,7 @@ $(document).ready(function () {
         };
         if ($("#comment").val() != '')
             params.comment = $("#comment").val();
-        if ($("#score").val() != '')
+        if ($("#score").val() != '' && $("#score").val() != 0 && $("#score").val() != '0')
             params.score = $("#score").val();
         $.ajax({
             type: "POST",
@@ -109,7 +109,6 @@ $(document).ready(function () {
                 notice("似乎出现了些小问题,更新失败，请稍后再试~", 'error');
             }
         });
-        NProgress.start();
     });
 });
 function initTable() {
@@ -207,7 +206,6 @@ window.operateEvents = {
 function detailFormatter(index, row) {
     var html = [];
     html.push('<ul>');
-    var row = students[index];
     $.each(row, function (key, value) {
         switch (key) {
             case 'comment':

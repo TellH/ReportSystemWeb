@@ -166,7 +166,7 @@ function list(url, getParams) {
             title: '注意事项',
             field: 'note',
             align: 'center',
-            width: "20px",
+            width: "20%",
             valign: 'middle'
         }, {
             title: '课程',
@@ -192,10 +192,6 @@ function list(url, getParams) {
             events: operateEvents,
             formatter: operateFormatter
         }],
-        // paginationFirstText:"首页",
-        // paginationPreText:"上一页",
-        // paginationNextText:"下一页",
-        // paginationLastText:"末页",
         pageList: "[10,20,50,100]",
         toolbar: "#toolbar",
         search: "true",
