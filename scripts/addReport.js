@@ -35,8 +35,8 @@ function summitToAddReport() {
         success: function (data) {
             NProgress.done();
             if (data.result == 'success') {
-                notice("发布成功！",'success');
-                location.reload(false);
+                if (window.opener && !window.opener.closed)
+                    window.opener.location="javascript:closeAddReportTab();"
             } else {
                 notice(data.msg,'error');
             }

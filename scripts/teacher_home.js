@@ -114,10 +114,15 @@ $(document).ready(function () {
         });
     });
     $("#btn_addReport").click(function () {
-        window.open("add_report.html?userId=" + userId + "&identity=" + 1, "_blank");
+        childWindow = window.open("add_report.html?userId=" + userId + "&identity=" + 1, "_blank");
     });
     $(".navbar-brand").attr("href", preUrl);
 });
+function closeAddReportTab() {
+    childWindow.close();
+    notice("实验报告布置成功！", 'success');
+    refreshTable();
+}
 function refreshTable() {
     table.bootstrapTable('refresh', selectedParams());
 }
