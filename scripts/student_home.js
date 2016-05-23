@@ -10,7 +10,7 @@ var table;
 var returnReportUrl;
 var userId;
 $(document).ready(function () {
-    userId=$.getUrlParam('userId');
+    userId = $.getUrlParam('userId');
     initNavigationBar();
     table = $('#table');
     list(preUrl + 'report/student/listAll.do', getListAllParam);
@@ -116,7 +116,7 @@ function updateReportUrl() {
             userId: userId,
             password: $("#password_for_updateReport").val(),
             reportId: selectedReportId,
-            docUrl: reportUrl
+            docUrl: returnReportUrl
         },
         success: function (data) {
             NProgress.done();
@@ -139,13 +139,19 @@ function list(url, getParams) {
             title: '实验报告题目',
             field: 'name',
             align: 'center',
-            width: "20%",
+            width: "10%",
             valign: 'middle'
         }, {
             title: '实验报告内容',
             field: 'content',
             align: 'center',
             width: "30%",
+            valign: 'middle'
+        }, {
+            title: '注意事项',
+            field: 'note',
+            align: 'center',
+            width: "20%",
             valign: 'middle'
         }, {
             title: '指导老师',
@@ -170,12 +176,6 @@ function list(url, getParams) {
             valign: 'middle',
             sortable: true
         }, {
-            title: '注意事项',
-            field: 'note',
-            align: 'center',
-            width: "20px",
-            valign: 'middle'
-        }, {
             title: '模板',
             field: 'templateUrl',
             align: 'center',
@@ -189,10 +189,6 @@ function list(url, getParams) {
             events: operateEvents,
             formatter: operateFormatter
         }],
-        // paginationFirstText:"首页",
-        // paginationPreText:"上一页",
-        // paginationNextText:"下一页",
-        // paginationLastText:"末页",
         pageList: "[10,20,50,100]",
         toolbar: "#toolbar",
         search: "true",
@@ -207,7 +203,7 @@ function list(url, getParams) {
         url: url,
         pagination: true,
         sidePagination: "server",
-        pageSize: 10,
+        pageSize: 5,
         queryParams: getParams,
         responseHandler: responseHandler
     });
@@ -228,12 +224,12 @@ function initNavigationBar() {
                 NProgress.done();
                 if (data.result == "failed") {
                     notice(data.msg, 'error');
-                } else {
-                    window.open("login.html", "_self");
                 }
+                window.open("login.html", "_self");
             },
             error: function (jqXHR) {
                 NProgress.done();
+                window.open("login.html", "_self");
                 notice("似乎出现了些小问题,无法注销", 'error');
             }
         })
@@ -254,7 +250,7 @@ function initNavigationBar() {
         success: function (data) {
             if (data.result == "success") {
                 var userName = data.user.name;
-                $("#welcome")[0].innerText = 'hi!' + userName + '同学';
+                $("#welcome")[0].innerText = 'hi!  ' + userName + '同学';
             }
         }
     });

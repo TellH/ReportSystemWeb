@@ -36,6 +36,7 @@ function summitToAddReport() {
             NProgress.done();
             if (data.result == 'success') {
                 notice("发布成功！",'success');
+                location.reload(false);
             } else {
                 notice(data.msg,'error');
             }

@@ -154,13 +154,19 @@ function list(url, getParams) {
             title: '实验报告题目',
             field: 'name',
             align: 'center',
-            width: "20%",
+            width: "10%",
             valign: 'middle'
         }, {
             title: '实验报告内容',
             field: 'content',
             align: 'center',
             width: "30%",
+            valign: 'middle'
+        }, {
+            title: '注意事项',
+            field: 'note',
+            align: 'center',
+            width: "20px",
             valign: 'middle'
         }, {
             title: '课程',
@@ -179,12 +185,6 @@ function list(url, getParams) {
             align: 'center',
             valign: 'middle',
             sortable: true
-        }, {
-            title: '注意事项',
-            field: 'note',
-            align: 'center',
-            width: "20px",
-            valign: 'middle'
         }, {
             title: '操作',
             align: 'center',

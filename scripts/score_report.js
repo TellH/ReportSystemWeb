@@ -31,8 +31,6 @@ function handleStudentsData() {
 $(document).ready(function () {
     userId = $.getUrlParam('userId');
     reportId = $.getUrlParam('reportId');
-    // userId = 3914;
-    // reportId = 5401115;
     table = $("#table");
     // load report detail
     NProgress.start();
@@ -41,8 +39,8 @@ $(document).ready(function () {
         url: preUrl + "report/teacher/detail.do",
         dataType: 'json',
         data: {
-            userId: userId/*3914*/,
-            reportId: reportId/*5401115*/
+            userId: userId,
+            reportId: reportId
         },
         success: function (data) {
             NProgress.done();
@@ -101,7 +99,7 @@ $(document).ready(function () {
                             reportId: reportId
                         }
                     });
-                    $("#scoreReportModal").hide();
+                    $("#scoreReportModal").modal('toggle');
                 } else {
                     notice(data.msg, 'error');
                 }
