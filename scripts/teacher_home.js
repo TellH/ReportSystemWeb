@@ -10,7 +10,12 @@ var pageData;
 var table;
 var returnTemplateUrl;
 var userId;
-var selectedParams = getListAllParam;
+var selectedListType = 'LIST_ALL';
+var requestUrl = preUrl + "report/teacher/listAll.do";
+var listAllUrl = preUrl + "report/teacher/listAll.do";
+var listByTermUrl = preUrl + "report/teacher/listByTerm.do";
+var listByLessonUrl = preUrl + "report/teacher/listByLesson.do";
+var pageSize = 5;
 $(document).ready(function () {
     userId = $.getUrlParam('userId');
     initNavigationBar();
@@ -20,7 +25,7 @@ $(document).ready(function () {
         todayHighlight: true
     });
     table = $('#table');
-    list(preUrl + 'report/teacher/listAll.do', getListAllParam);
+    initTable();
     $("#selected_file_name")[0].style.display = "none";
     var uploader = Qiniu.uploader({
         runtimes: 'html5,flash,html4',      // 上传模式,依次退化
@@ -124,7 +129,7 @@ function closeAddReportTab() {
     refreshTable();
 }
 function refreshTable() {
-    table.bootstrapTable('refresh', selectedParams());
+    table.bootstrapTable('refresh', {url: requestUrl});
 }
 function updateTemplateUrl() {
     $.ajax({
@@ -153,8 +158,8 @@ function updateTemplateUrl() {
         }
     });
 }
-function list(url, getParams) {
-    $("#table").bootstrapTable({
+function initTable() {
+    table.bootstrapTable({
         columns: [{
             title: '实验报告题目',
             field: 'name',
@@ -206,15 +211,34 @@ function list(url, getParams) {
         showExport: "true",
         detailView: "true",
         detailFormatter: "detailFormatter",
-
         dataType: "json",
-        url: url,
+        url: requestUrl,
         pagination: true,
         sidePagination: "server",
-        pageSize: 5,
+        pageSize: pageSize,
         queryParams: getParams,
         responseHandler: responseHandler
     });
+}
+function getParams(config) {
+    var params = {
+        userId: userId,
+        itemNum: config.limit,
+        page: table.bootstrapTable('getOptions').pageNumber
+    };
+    switch (selectedListType) {
+        case 'LIST_ALL':
+            break;
+        case 'LIST_BY_TERM':
+            params.term = selectedTerm;
+            break;
+        case 'LIST_BY_LESSON':
+            params.lessonId = selectedLesson;
+            break;
+        default:
+            break;
+    }
+    return params;
 }
 function initNavigationBar() {
     addTermListItem();
@@ -246,7 +270,8 @@ function initNavigationBar() {
     $("#listAll").click(function () {
         switchTab($(this));
         NProgress.start();
-        selectedParams = getListAllParam;
+        selectedListType = 'LIST_BY_ALL';
+        requestUrl = listAllUrl;
         refreshTable();
     });
     $.ajax({
@@ -376,54 +401,17 @@ function onclickTermListItem() {
     switchTab($("#listByTerm"));
     selectedTerm = $(this).attr('value');
     NProgress.start();
-    selectedParams = getListByTermParam;
+    selectedListType = 'LIST_BY_TERM';
+    requestUrl = listByTermUrl;
     refreshTable();
 }
 function onclickLessonListItem() {
     switchTab($("#listByLesson"));
     selectedLesson = $(this).attr('value');
     NProgress.start();
-    selectedParams = getListByLessonParam;
+    selectedListType = 'LIST_BY_LESSON';
+    requestUrl = listByLessonUrl;
     refreshTable();
-}
-function getListAllParam(params) {
-    if (!params) {
-        return {
-            url: preUrl + "report/teacher/listAll.do",
-            query: {
-                userId: userId,
-                itemNum: table.bootstrapTable('getOptions').pageSize,
-                page: table.bootstrapTable('getOptions').pageNumber
-            }
-        }
-    }
-    return {
-        userId: userId,
-        itemNum: params.limit,
-        page: table.bootstrapTable('getOptions').pageNumber
-    };
-}
-function getListByTermParam() {
-    return {
-        url: preUrl + "report/teacher/listByTerm.do",
-        query: {
-            userId: userId,
-            term: selectedTerm,
-            itemNum: table.bootstrapTable('getOptions').pageSize,
-            page: table.bootstrapTable('getOptions').pageNumber
-        }
-    };
-}
-function getListByLessonParam() {
-    return {
-        url: preUrl + "report/teacher/listByLesson.do",
-        query: {
-            userId: userId,
-            lessonId: selectedLesson,
-            itemNum: table.bootstrapTable('getOptions').pageSize,
-            page: table.bootstrapTable('getOptions').pageNumber
-        }
-    };
 }
 function responseHandler(sourceData) {
     NProgress.done();
@@ -439,7 +427,7 @@ function responseHandler(sourceData) {
                 pageData[i].date_from = pageData[i].date_from.split(" ")[0];
         }
         return {
-            "total": sourceData.totalPages,
+            "total": sourceData.total,
             "rows": pageData
         }
     } else {

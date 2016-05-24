@@ -3,17 +3,23 @@
  */
 var preUrl = '';
 var selectedReportId;
+var selectedListType = 'LIST_ALL';
 var selectedTerm;
 var selectedStatus;
 var pageData;
 var table;
 var returnReportUrl;
 var userId;
+var requestUrl = preUrl + "report/student/listAll.do";
+var listAllUrl = preUrl + "report/student/listAll.do";
+var listByTermUrl = preUrl + "report/student/listByTerm.do";
+var listByStatusUrl = preUrl + "report/student/listByStatus.do";
+var pageSize = 5;
 $(document).ready(function () {
     userId = $.getUrlParam('userId');
     initNavigationBar();
     table = $('#table');
-    list(preUrl + 'report/student/listAll.do', getListAllParam);
+    initTable();
     $("#selected_file_name")[0].style.display = "none";
     var uploader = Qiniu.uploader({
         runtimes: 'html5,flash,html4',      // 上传模式,依次退化
@@ -133,8 +139,8 @@ function updateReportUrl() {
         }
     });
 }
-function list(url, getParams) {
-    $("#table").bootstrapTable({
+function initTable() {
+    table.bootstrapTable({
         columns: [{
             title: '实验报告题目',
             field: 'name',
@@ -200,10 +206,10 @@ function list(url, getParams) {
         detailFormatter: "detailFormatter",
 
         dataType: "json",
-        url: url,
+        url: requestUrl,
         pagination: true,
         sidePagination: "server",
-        pageSize: 5,
+        pageSize: pageSize,
         queryParams: getParams,
         responseHandler: responseHandler
     });
@@ -237,8 +243,11 @@ function initNavigationBar() {
     $("#listAll").click(function () {
         switchTab($(this));
         NProgress.start();
-        table.bootstrapTable('refresh', getListAllParam());
+        selectedListType = 'LIST_ALL';
+        requestUrl = listAllUrl;
+        table.bootstrapTable('refresh', {url: requestUrl});
     });
+
     $.ajax({
         type: "POST",
         url: preUrl + "account/getInfo.do",
@@ -328,54 +337,39 @@ function addTermListItem() {
 }
 function onclickTermListItem() {
     switchTab($("#listByTerm"));
+    selectedListType = 'LIST_BY_TERM';
+    requestUrl = listByTermUrl;
     selectedTerm = $(this).attr('value');
     NProgress.start();
-    table.bootstrapTable('refresh', getListByTermParam());
+    table.bootstrapTable('refresh', {url: requestUrl});
 }
 function onclickStatusListItem(li) {
     switchTab($("#listByStatus"));
+    selectedListType = 'LIST_BY_STATUS';
+    requestUrl = listByStatusUrl;
     selectedStatus = $(li).attr('value');
     NProgress.start();
-    table.bootstrapTable('refresh', getListByStatusParam());
+    table.bootstrapTable('refresh', {url: requestUrl});
 }
-function getListAllParam(params) {
-    if (!params) {
-        return {
-            url: preUrl + "report/student/listAll.do",
-            query: {
-                userId: userId,
-                itemNum: table.bootstrapTable('getOptions').pageSize,
-                page: table.bootstrapTable('getOptions').pageNumber
-            }
-        }
-    }
-    return {
+function getParams(config) {
+    var params = {
         userId: userId,
-        itemNum: params.limit,
+        itemNum: config.limit,
         page: table.bootstrapTable('getOptions').pageNumber
     };
-}
-function getListByTermParam() {
-    return {
-        url: preUrl + "report/student/listByTerm.do",
-        query: {
-            userId: userId,
-            term: selectedTerm,
-            itemNum: table.bootstrapTable('getOptions').pageSize,
-            page: table.bootstrapTable('getOptions').pageNumber
-        }
-    };
-}
-function getListByStatusParam() {
-    return {
-        url: preUrl + "report/student/listByStatus.do",
-        query: {
-            userId: userId,
-            status: selectedStatus,
-            itemNum: table.bootstrapTable('getOptions').pageSize,
-            page: table.bootstrapTable('getOptions').pageNumber
-        }
-    };
+    switch (selectedListType) {
+        case 'LIST_ALL':
+            break;
+        case 'LIST_BY_TERM':
+            params.term = selectedTerm;
+            break;
+        case 'LIST_BY_STATUS':
+            params.status = selectedStatus;
+            break;
+        default:
+            break;
+    }
+    return params;
 }
 
 function responseHandler(sourceData) {
@@ -403,7 +397,7 @@ function responseHandler(sourceData) {
                 pageData[i].date_from = pageData[i].date_from.split(" ")[0];
         }
         return {
-            "total": sourceData.totalPages,
+            "total": sourceData.total,
             "rows": pageData
         }
     } else {
