@@ -39,10 +39,9 @@ function updatePerStudentResult(params) {
             NProgress.done();
             if (data.result == "success") {
                 notice(data.msg, 'success');
-                $("#scoreReportModal").modal('toggle');
-                location.reload();
             } else {
                 notice(data.msg, 'error');
+                location.reload();
             }
         },
         error: function (jqXHR) {
@@ -109,6 +108,7 @@ $(document).ready(function () {
             params.score = $("#score").val();
         }
         updatePerStudentResult(params);
+        $("#scoreReportModal").modal('hide');
     });
 });
 function initTable() {
@@ -143,6 +143,7 @@ function initTable() {
             field: 'score',
             align: 'center',
             valign: 'middle',
+            events: operateEvents,
             formatter: operateScore
         }, {
             title: '年级',
