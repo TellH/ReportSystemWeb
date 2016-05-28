@@ -1,7 +1,7 @@
 /**
  * Created by tlh on 2016/5/21.
  */
-var preUrl = 'http://localhost:8080/ReportSystem/';
+var preUrl = '';
 var userId;
 var reportId;
 var selectedStudentId;
@@ -27,6 +27,30 @@ function handleStudentsData() {
             students[i].status = '已批改';
         }
     }
+}
+function updatePerStudentResult(params) {
+    NProgress.start();
+    $.ajax({
+        type: "POST",
+        url: preUrl + "report/teacher/updatePerStudent.do",
+        dataType: 'json',
+        data: params,
+        success: function (data) {
+            NProgress.done();
+            if (data.result == "success") {
+                notice(data.msg, 'success');
+                $("#scoreReportModal").modal('toggle');
+                location.reload();
+            } else {
+                notice(data.msg, 'error');
+            }
+        },
+        error: function (jqXHR) {
+            NProgress.done();
+            notice("似乎出现了些小问题,更新失败，请稍后再试~", 'error');
+            location.reload();
+        }
+    });
 }
 $(document).ready(function () {
     userId = $.getUrlParam('userId');
@@ -73,42 +97,18 @@ $(document).ready(function () {
             notice("我们在为您拼命加载中，请您耐心等待！Loading...", 'info');
             return;
         }
-        NProgress.start();
         var params = {
             userId: userId,
             reportId: reportId,
             studentId: selectedStudentId
         };
-        if ($("#comment").val() != '')
+        if ($("#comment").val() != '') {
             params.comment = $("#comment").val();
-        if ($("#score").val() != '' && $("#score").val() != 0 && $("#score").val() != '0')
+        }
+        if ($("#score").val() != '' && $("#score").val() != 0 && $("#score").val() != '0') {
             params.score = $("#score").val();
-        $.ajax({
-            type: "POST",
-            url: preUrl + "report/teacher/updatePerStudent.do",
-            dataType: 'json',
-            data: params,
-            success: function (data) {
-                NProgress.done();
-                if (data.result == "success") {
-                    notice(data.msg, 'success');
-                    table.bootstrapTable('refresh', {
-                        url: preUrl + "report/teacher/detail.do",
-                        query: {
-                            userId: userId,
-                            reportId: reportId
-                        }
-                    });
-                    $("#scoreReportModal").modal('toggle');
-                } else {
-                    notice(data.msg, 'error');
-                }
-            },
-            error: function (jqXHR) {
-                NProgress.done();
-                notice("似乎出现了些小问题,更新失败，请稍后再试~", 'error');
-            }
-        });
+        }
+        updatePerStudentResult(params);
     });
 });
 function initTable() {
@@ -142,7 +142,8 @@ function initTable() {
             title: '分数',
             field: 'score',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter: operateScore
         }, {
             title: '年级',
             field: 'grade',
@@ -163,17 +164,48 @@ function initTable() {
         showExport: "true",
         detailView: "true",
         detailFormatter: "detailFormatter",
-        data: students,
-        responseHandler: responseHandler
+        data: students
     });
-
+    $('.scoreInTable').editable({
+        type: 'text',
+        title: '打分',
+        placeholder: "-",
+        validate: handleInputScore
+    });
+}
+function operateScore(value, row, index) {
+    return [
+        '<a class="scoreInTable" href="#">',
+        value,
+        '</a>'
+    ].join('');
+}
+function handleInputScore(value) {
+    value = $.trim(value);
+    if (!value) {
+        return 'This field is required';
+    }
+    if (!/^[0-9]*$/.test(value)) {
+        return '请输入合法的数字'
+    }
+    if (value <= 0) {
+        return '老师，您给的分数不厚道吧~'
+    }
+    var params = {
+        userId: userId,
+        reportId: reportId,
+        studentId: selectedStudentId
+    };
+    params.score = value;
+    updatePerStudentResult(params);
+    return '';
 }
 function operateFormatter(value, row, index) {
     return [
-        '<a class="download" href="javascript:void(0)" title="下载学生提交的报告">',
+        '<a class="download" href="#" title="下载学生提交的报告">',
         '<i class="glyphicon glyphicon-download-alt"></i>',
         '</a>&nbsp;',
-        '<a class="score" href="javascript:void(0)" target="_blank" title="批改实验报告" data-toggle="modal" data-target="#scoreReportModal">',
+        '<a class="score" href="#" target="_blank" title="批改实验报告" data-toggle="modal" data-target="#scoreReportModal">',
         '<i class="material-icons">spellcheck</i>',
         '</a>&nbsp;'
     ].join('');
@@ -201,6 +233,9 @@ window.operateEvents = {
     'click .score': function (e, value, row, index) {
         selectedStudentId = row.id;
         initScoreReportModel(row);
+    },
+    'click .scoreInTable': function (e, value, row, index) {
+        selectedStudentId = row.id;
     }
 };
 function detailFormatter(index, row) {
@@ -229,18 +264,4 @@ function detailFormatter(index, row) {
     });
     html.push('</ul>');
     return html.join('');
-}
-function responseHandler(sourceData) {
-    NProgress.done();
-    if (sourceData.result == "success") {
-        students = sourceData.data[0];
-        handleStudentsData();
-        return {
-            "rows": students
-        }
-    } else {
-        return {
-            "rows": []
-        }
-    }
 }
